@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
+    /* Target */
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    /* Module */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* React */
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+
+    /* Strictness */
+    "strict": true,
+
+    /* 🔥 IMPORTANT FIX 🔥 */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    /* Safety */
+    "skipLibCheck": true,
+    // "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+    // "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}

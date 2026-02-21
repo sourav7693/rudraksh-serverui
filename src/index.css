@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --font-spline: "Spline Sans", sans-serif;
+
+  --color-defined-blue: #4A180E;
+  --color-defined-white: #e8ebf2;
+  --color-defined-black: #666666;
+
+  --shadow-defined-light: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  --breakpoint-sm: 280px;
+  --breakpoint-md: 760px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xlg: 1280px;
+  --breakpoint-xl: 1440px;
+  --breakpoint-xxl: 1980px;
+  --breakpoint-xxxl: 2480px;
+  --inset-shadow-custom-light: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+  --inset-shadow-custom-dark: rgba(0, 0, 0, 0.35) 0px 2px 7px;
+}
+
+@utility scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+@layer components {
+  .self-padding {
+    @apply md:px-10 px-4 py-8 flex flex-col gap-8;
+  }
+
+  button {
+    @apply cursor-pointer rounded-md hover:scale-100 transition-all duration-700 ease-in-out;
+  }
+}
+
+
+.no-scrollbar {
+  /* Firefox */
+  scrollbar-width: none;
+  
+  /* IE/Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome/Safari/Webkit */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
