@@ -6,7 +6,7 @@ const Slider = () => {
   return (
     <div className="self-padding">
       <Helmet>
-        <title>Pri Priya Nursury Admin | Slider</title>
+        <title>Ganapati Rudrakshaam Admin | Slider</title>
       </Helmet>
       <h2 className="text-2xl font-semibold">Manage Sliders</h2>
       <SliderManagement />

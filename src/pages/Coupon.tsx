@@ -5,7 +5,7 @@ const Coupon = () => {
   return (
     <>
     <Helmet>
-      <title>Pri Priya Nursury Admin | Coupon</title>
+      <title>Ganapati Rudrakshaam Admin | Coupon</title>
     </Helmet>
     
      <div className="self-padding">
