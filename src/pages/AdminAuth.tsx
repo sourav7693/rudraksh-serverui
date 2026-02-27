@@ -8,7 +8,6 @@ import {
   FaTwitter,
 } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
-import api from "../lib/axios";
 import axios from "axios";
 
 const OTP_COOLDOWN = 300; // 5 minutes
@@ -35,10 +34,13 @@ const AdminAuth = () => {
     try {
       setLoading(true);
 
-     const res = await axios.post("/api/user/login", {
-       email,
-       password,
-     });
+     const res = await axios.post(
+       `${import.meta.env.VITE_BASE_URL}/api/user/login`,
+       {
+         email,
+         password,
+       },
+     );
 
      if (!res.data.success) {
       console.log(res.data.message);
