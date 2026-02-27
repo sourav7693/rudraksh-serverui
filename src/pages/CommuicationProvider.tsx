@@ -7,7 +7,7 @@ const CommuicationProvider = () => {
   return (
     <div className=' self-padding'>
       <Helmet>
-        <title>Pri Priya Nursury Admin | Communication Provider</title>
+        <title>Ganapati Rudrakshaam Admin | Communication Provider</title>
       </Helmet>
         <div className=' flex flex-col gap-6'>
             <div>

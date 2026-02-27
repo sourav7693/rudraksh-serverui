@@ -5,7 +5,7 @@ const BulkMarketing = () => {
   return (
    <div className="self-padding">
     <Helmet>
-      <title>Pri Priya Nursury Admin | Bulk Marketing</title>
+      <title>Ganapati Rudrakshaam Admin | Bulk Marketing</title>
     </Helmet>
       <h2 className="text-2xl font-semibold">Bulk SMS / Bulk Marketing</h2>
        <BulkMarketingManagement />

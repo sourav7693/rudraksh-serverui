@@ -5,7 +5,7 @@ const Customer = () => {
   return (
     <>
       <Helmet>
-        <title>Pri Priya Nursury Admin | Customer</title>
+        <title>Ganapati Rudrakshaam Admin | Customer</title>
       </Helmet>
       <div className="self-padding">
         <h2 className="text-2xl font-semibold">Manage Customer</h2>

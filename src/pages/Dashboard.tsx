@@ -8,7 +8,7 @@ const Dashboard = () => {
   return (
     <>
     <Helmet>
-      <title>Pri Priya Nursury Admin | Dashboard</title>
+      <title>Ganapati Rudrakshaam Admin | Dashboard</title>
     </Helmet>
     
     <DashboardManage />

@@ -48,7 +48,7 @@ export default function Reviews() {
   return (
     <>
       <Helmet>
-        <title>Pri Priya Nursury Admin | Reviews</title>
+        <title>Ganapati Rudrakshaam Admin | Reviews</title>
       </Helmet>
       <div className="self-padding">
         <h2 className="text-2xl font-semibold">Manage Reviews</h2>

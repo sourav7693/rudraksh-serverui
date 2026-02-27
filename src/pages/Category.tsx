@@ -6,7 +6,7 @@ const Category = () => {
   return (
     <>
     <Helmet>
-      <title>Pri Priya Nursury Admin | Category</title>
+      <title>Ganapati Rudrakshaam Admin | Category</title>
     </Helmet>
     
      <div className="self-padding">
