@@ -6,7 +6,7 @@ const Order = () => {
   return (
     <>
     <Helmet>
-      <title>Pri Priya Nursury Admin | Order</title>
+      <title>Ganapati Rudrakshaam Admin | Order</title>
     </Helmet>
      <div className="self-padding">
         <h2 className="text-2xl font-semibold">Manage Order</h2>

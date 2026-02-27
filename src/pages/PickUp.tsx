@@ -7,7 +7,7 @@ const PickUp = () => {
   return (
     <>
     <Helmet>
-      <title>Pri Priya Nursury Admin | Pickup</title>
+      <title>Ganapati Rudrakshaam Admin | Pickup</title>
     </Helmet>
     
      <div className="self-padding">
