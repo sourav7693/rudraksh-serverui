@@ -35,7 +35,7 @@ const AdminAuth = () => {
       setLoading(true);
 
      const res = await axios.post(
-       `${import.meta.env.VITE_BASE_URL}/api/user/login`,
+       `${import.meta.env.VITE_BASE_URL}/user/login`,
        {
          email,
          password,
@@ -65,7 +65,7 @@ const AdminAuth = () => {
       setLoading(true);
 
       const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/login/otp/send`,
+        `${import.meta.env.VITE_BASE_URL}/user/login/otp/send`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -93,7 +93,7 @@ const AdminAuth = () => {
       setLoading(true);
 
       const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/user/login/otp/verify`,
+        `${import.meta.env.VITE_BASE_URL}/user/login/otp/verify`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
