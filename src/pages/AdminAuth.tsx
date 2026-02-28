@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import api from "../lib/axios";
 
 const OTP_COOLDOWN = 300; // 5 minutes
 
@@ -34,8 +35,8 @@ const AdminAuth = () => {
     try {
       setLoading(true);
 
-     const res = await axios.post(
-       `${import.meta.env.VITE_BASE_URL}/user/login`,
+     const res = await api.post(
+       `${import.meta.env.VITE_BASE_URL}/api/user/login`,
        {
          email,
          password,
@@ -64,17 +65,17 @@ const AdminAuth = () => {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/user/login/otp/send`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/user/login/otp/send`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mobile }),
+          mobile,
         },
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.data.success) {
+        toast.error(res.data.message);
+        return;
+      }
 
       toast.success("OTP sent on WhatsApp 📲");
       setOtpSent(true);
@@ -92,21 +93,18 @@ const AdminAuth = () => {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/user/login/otp/verify`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ mobile, otp }),
-        },
+      const res = await api.post(
+        `${import.meta.env.VITE_BASE_URL}/api/user/login/otp/verify`,
+        { mobile, otp },
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.data.success) {
+        toast.error(res.data.message);
+        return;
+      }
 
-      setUser(data.user);
-      toast.success(data.message);
+      setUser(res.data.user);
+      toast.success(res.data.message);
       
     } catch (err) {
       if (err instanceof Error) toast.error(err.message);
