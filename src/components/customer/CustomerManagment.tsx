@@ -129,7 +129,7 @@ const CustomerManagment: React.FC = () => {
         `${import.meta.env.VITE_BASE_URL}/api/customer/${id}`,
         { status: updatedStatus },
       );
-      if (status === 200) {
+      if (status === 200) {        
         toast.success(data.message);
         fetchCustomers();
         return;
@@ -164,17 +164,7 @@ const CustomerManagment: React.FC = () => {
               className="bg-defined-white rounded pl-10 pr-4 py-2 outline-none w-full sm:w-[200px]"
             />
           </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button className="bg-defined-white px-4 py-2 rounded">
-            Export CSV
-          </button>
-
-          <select className="bg-defined-white outline-none rounded px-4 py-2">
-            <option value="">Delete Select</option>
-          </select>
-        </div>
+        </div>        
       </div>
 
       <div className="overflow-x-auto">

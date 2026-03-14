@@ -4,6 +4,7 @@ import Drawer from "../../global/Drawer";
 import Toggle from "../../global/Toggle";
 import { Link } from "react-router-dom";
 import AddUserForm from "./AddUserForm";
+import toast from "react-hot-toast";
 
 export interface UserItem {
   _id: string;
@@ -59,8 +60,9 @@ const UserManagement = () => {
         method: "DELETE",
         credentials: "include",
       });
-
-      if (res.ok) fetchUsers();
+      const data = await res.json();      
+      if (data.success) {fetchUsers(); toast.success(data.message);}
+      else toast.error(data.message);
     } catch (err) {
       console.error(err);
     }

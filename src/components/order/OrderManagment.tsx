@@ -135,11 +135,12 @@ const OrderManagement = () => {
         },
       );
       const data = await res.json();
+      console.log(data);
       if (!res.ok) {
         throw new Error(data.message);
       }
     } catch (error: any) {
-      console.error(error);
+      console.error(error);      
       toast.error(error.message);
     } finally {
       setLoading(false);

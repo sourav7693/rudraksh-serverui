@@ -42,6 +42,7 @@ export interface CategoryRow {
 
 export default function CategoryManagement() {
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<CategoryRow | null>(null);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
@@ -62,7 +63,7 @@ export default function CategoryManagement() {
       const res = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
-        }/api/category?limit=10&page=${pageNum}&search=${searchTerm}`
+        }/api/category?limit=10&page=${pageNum}&search=${searchTerm}&status=${status}`
       );
       const data = await res.json();
 
@@ -113,7 +114,7 @@ export default function CategoryManagement() {
     setPage(1);
     setHasMore(true);
     fetchCategories(1, search);
-  }, [search]);
+  }, [search, status]);
 
   useEffect(() => {
     if (page > 1) {
@@ -221,6 +222,8 @@ export default function CategoryManagement() {
         title="Add Category"
         search={search}
         setSearch={setSearch}
+        status={status}
+        setStatus={setStatus}
         onAdd={() => {
           setPopupKey((k) => k + 1);
           setEditData(null);

@@ -25,8 +25,8 @@ const Toggle = ({
           body: JSON.stringify({ status: newStatus }),
         },
       );
-      const dada = await res.json();
-      if (!res.ok) throw Error(dada.message || `Failed to update ${name}`);
+      const data = await res.json();
+      if (!res.ok) throw Error(data.message || `Failed to update ${name}`);
       toast.success(`${name.toUpperCase()} updated successfully`);
       setToggle(newStatus);
     } catch (error: any) {

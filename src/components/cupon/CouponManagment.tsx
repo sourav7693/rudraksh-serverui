@@ -26,6 +26,7 @@ const CouponManagement: React.FC = () => {
   const [openForm, setOpenForm] = useState(false);
   const [editData, setEditData] = useState<CouponItem | null>(null);
   const [viewData, setViewData] = useState<CouponItem | null>(null);
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -34,9 +35,9 @@ const CouponManagement: React.FC = () => {
   const fetchCoupons = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/coupon?page=${page}&limit=${limit}`
-      );
+   const res = await fetch(
+     `${import.meta.env.VITE_BASE_URL}/api/coupon?page=${page}&limit=${limit}&search=${search}&status=${status}`,
+   );
       const data = await res.json();
       setCoupons(data.coupons || []);
     } catch (err) {
@@ -48,7 +49,7 @@ const CouponManagement: React.FC = () => {
 
   useEffect(() => {
     fetchCoupons();
-  }, [page]);
+  }, [page, search, status]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure?")) return;
@@ -60,10 +61,6 @@ const CouponManagement: React.FC = () => {
     fetchCoupons();
   };
 
-  const filtered = coupons.filter((c) =>
-    c.code.toLowerCase().includes(search.toLowerCase())
-  );
-
   const totalPages = Math.ceil(coupons.length / limit);
 
   return (
@@ -73,6 +70,8 @@ const CouponManagement: React.FC = () => {
         title="Add Coupon"
         search={search}
         setSearch={setSearch}
+        status={status}
+        setStatus={setStatus}
         onAdd={() => {
           setEditData(null);
           setOpenForm(true);
@@ -96,13 +95,16 @@ const CouponManagement: React.FC = () => {
           </thead>
 
           <tbody>
-            {filtered.map((item) => (
+            {coupons.map((item) => (
               <tr key={item.couponId} className="hover:bg-gray-50">
                 <td className="p-3">{item.couponId}</td>
                 <td className="p-3">{item.name}</td>
                 <td className="p-3">{item.code}</td>
                 <td className="p-3">{item.discountType}</td>
-                <td className="p-3">{item.discountValue}{item.discountType === "percentage" ? "%" : ""}</td>
+                <td className="p-3">
+                  {item.discountValue}
+                  {item.discountType === "percentage" ? "%" : ""}
+                </td>
 
                 <td className="p-3">
                   <Toggle
