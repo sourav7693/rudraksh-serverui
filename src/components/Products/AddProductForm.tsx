@@ -413,7 +413,12 @@ const AddProductForm: React.FC<AddProductProps> = ({
       fd.append("images", img);
     });
 
-    fd.append("variables", JSON.stringify(variables));
+   const cleanedVariables = variables.map((v) => ({
+     name: v.name.trim().toLowerCase() === "colour" ? "Color" : v.name.trim(),
+     values: v.values.map((val) => val.trim()),
+   }));
+
+   fd.append("variables", JSON.stringify(cleanedVariables));
 
     // console.log("Submitting variables:", variables);
 
@@ -433,6 +438,10 @@ const AddProductForm: React.FC<AddProductProps> = ({
       url = `${import.meta.env.VITE_BASE_URL}/api/product/${
         selectedParent._id
       }/variant`;
+    }
+
+    if (type === "Variable" && selectedParent) {
+      fd.append("parentProduct", selectedParent._id);
     }
 
     // EDITING EXISTING SIMPLE PRODUCT
