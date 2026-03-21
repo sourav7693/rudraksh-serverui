@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import type { UserItem } from "./UserManagement";
+import { allowOnlyNumbers } from "../../utils/inputHandlers";
 
 const AVAILABLE_PERMISSIONS = [
   { label: "Dashboard", value: "dashboard" },
@@ -132,7 +133,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
           <div>
             <input
               type="text"
+              maxLength={10}
               placeholder="Mobile"
+              onKeyDown={allowOnlyNumbers}
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               className="w-full border border-gray-200 outline-none rounded px-3 py-2"
@@ -195,7 +198,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
                   value={permissions}
                   onChange={(e) =>
                     setPermissions(
-                      Array.from(e.target.selectedOptions, (o) => o.value)
+                      Array.from(e.target.selectedOptions, (o) => o.value),
                     )
                   }
                   className="w-full border border-gray-200 outline-none rounded px-3 py-2 min-h-[120px]"

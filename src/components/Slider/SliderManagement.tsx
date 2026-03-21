@@ -99,7 +99,7 @@ const SliderManagement = () => {
                         <img
                           src={item.image.url}
                           alt={item.name}
-                          className="w-20"
+                          className="size-18"
                         />
                       </td>
     
@@ -165,7 +165,7 @@ const SliderManagement = () => {
                   <img
                     src={viewData.image.url}
                     alt={viewData.name}
-                    className="w-20"
+                    className="size-40"
                   />
                 </p>
                 <p>

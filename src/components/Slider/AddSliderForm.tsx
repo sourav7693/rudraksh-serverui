@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import type { SliderItem } from "./SliderManagement";
+import toast from "react-hot-toast";
 
 interface AddSliderFormProps {
   open: boolean;
@@ -36,17 +37,26 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
     }
   }, [editData, open]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setPreview(URL.createObjectURL(file));
-    }
-  };
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+
+  if (file) {
+    const maxSize = 1 * 1024 * 1024; // 1MB
+
+  if (file.size > maxSize) {
+    toast.error("Image must be less than 1 MB 🚫");
+    e.target.value = ""; // reset input
+    return;
+  }
+
+    setImageFile(file);
+    setPreview(URL.createObjectURL(file));
+  }
+};
 
   const handleSubmit = async () => {
     if (!name) {
-      alert("Name is required");
+      toast.error("Name is required");
       return;
     }
 
@@ -81,15 +91,15 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
       const data = await res.json();
 
       if (res.ok) {
-        alert(editData ? "Slider updated!" : "Slider added!");
+        toast.success(editData ? "Slider updated!" : "Slider added!");
         onSuccess();
         onClose();
       } else {
-        alert(data.message || "Something went wrong!");
+        toast.error(data.message || "Something went wrong!");
       }
     } catch (err) {
       console.error(err);
-      alert("Server not responding");
+      toast.error("Server not responding");
     } finally {
       setLoading(false);
     }
@@ -102,7 +112,7 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
       <div className="absolute inset-0 bg-black/40" onClick={onClose}></div>
 
       <div className="relative ml-auto w-full sm:w-[750px] h-full bg-white shadow-2xl overflow-y-auto p-5">
-        <div className="flex justify-between items-center border-b pb-3">
+        <div className="flex justify-between items-center border-b border-gray-200 pb-3">
           <h2 className="text-xl font-semibold">
             {editData ? "Edit Slider" : "Add Slider"}
           </h2>
@@ -119,7 +129,7 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-200 outline-none rounded px-3 py-2"
             />
           </div>
 
@@ -130,14 +140,14 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-200 rounded px-3 py-2"
             />
 
             {preview && (
               <img
                 src={preview}
                 alt="preview"
-                className="mt-3 w-32 h-32 object-cover rounded border"
+                className="mt-3 w-32 h-32 object-cover rounded border border-gray-200"
               />
             )}
           </div>

@@ -50,6 +50,12 @@ export interface AdminOrder {
     status: string;
   };
 
+  shipping?: {
+    currentStatus?: string;
+    awbNumber?: string;
+    awbError?: string;
+  };
+
   createdAt: string;
 }
 
@@ -122,6 +128,32 @@ const OrderManagement = () => {
   useEffect(() => {
     fetchOrders();
   }, [page, search, status, startDate, endDate]);
+
+  const handleShipNow = async (orderId: string) => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/order/${orderId}/ship`,
+        {
+          method: "POST",
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      toast.success("Shipment processed");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+      fetchOrders();
+    }
+  };
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
@@ -238,19 +270,25 @@ const OrderManagement = () => {
                   </select>
                 </td>
 
-                <td className="p-3 flex flex-row gap-2">
+                <td className="p-3 flex flex-row gap-2 items-center justify-center">
                   <button
                     onClick={() => setViewData(o)}
-                    className=" text-blue-600"
+                    className="text-blue-600"
                   >
                     View
                   </button>
-                  {/* <button
-                    className="text-red-600"
-                    onClick={() => handleDelete(o.orderId)}
-                  >
-                    Delete
-                  </button> */}
+
+                  {/* 🚚 SHIP / RETRY BUTTON */}
+                  {o.status === "Confirmed" && !o.shipping?.awbNumber && (
+                    <button
+                      onClick={() => handleShipNow(o.orderId)}
+                      className="text-purple-600 text-nowrap px-3 py-1 rounded"
+                    >
+                      {o.shipping?.currentStatus === "AWB_FAILED"
+                        ? "Retry AWB"
+                        : "Ship Now"}
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
