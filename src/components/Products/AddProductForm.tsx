@@ -92,7 +92,7 @@ const AddProductForm: React.FC<AddProductProps> = ({
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/product?search=${query}`,
+        `${import.meta.env.VITE_BASE_URL}/api/product?q=${query}`,
       );
       const data = await res.json();
       const filtered = data.data.filter((p: ProductItem) => !p.isVariant);
@@ -303,18 +303,18 @@ const AddProductForm: React.FC<AddProductProps> = ({
   const removeVariable = (i: number) =>
     setVariables((prev) => prev.filter((_, idx) => idx !== i));
 
-  const toggleVariableValue = (index: number, value: string) => {
-    setVariables((prev) =>
-      prev.map((item, i) =>
-        i === index
-          ? {
-              ...item,
-              values: [value], // 🔥 ONLY ONE VALUE
-            }
-          : item,
-      ),
-    );
-  };
+const toggleVariableValue = (index: number, value: string) => {
+  const variableName = variables[index].name;
+  const usedValues = getUsedValues(variableName);
+
+  if (usedValues.includes(value.toLowerCase())) {
+    return; // 🚫 block selection
+  }
+
+  setVariables((prev) =>
+    prev.map((item, i) => (i === index ? { ...item, values: [value] } : item)),
+  );
+};
 
   const handleAttributeToggle = (id: string) => {
     setAttributes(
@@ -506,6 +506,36 @@ const AddProductForm: React.FC<AddProductProps> = ({
   };
 
   if (!open) return null;
+
+  const getUsedValues = (variableName: string) => {
+    if (!selectedParent) return [];
+
+    const normalizedName =
+      variableName.trim().toLowerCase() === "colour"
+        ? "color"
+        : variableName.toLowerCase();
+
+    const used = new Set<string>();
+
+    const allProducts = [selectedParent, ...(selectedParent.variants || [])];
+
+    allProducts.forEach((product: any) => {
+      product.variables?.forEach((v: any) => {
+        const name =
+          v.name.trim().toLowerCase() === "colour"
+            ? "color"
+            : v.name.toLowerCase();
+
+        if (name === normalizedName) {
+          v.values.forEach((val: string) => {
+            used.add(val.trim().toLowerCase());
+          });
+        }
+      });
+    });
+
+    return Array.from(used);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -808,12 +838,23 @@ const AddProductForm: React.FC<AddProductProps> = ({
                         >
                           <option value="" disabled>
                             Select an option
-                          </option>
-                          {backendVar.value.map((value: string) => (
-                            <option key={value} value={value}>
-                              {value}
-                            </option>
-                          ))}
+                          </option>                          
+                          {backendVar.value.map((value: string) => {
+                            const isUsed = getUsedValues(
+                              variable.name,
+                            ).includes(value);
+
+                            return (
+                              <option
+                                key={value}
+                                value={value}
+                                disabled={isUsed}
+                                style={{ color: isUsed ? "#aaa" : "#000" }}
+                              >
+                                {value} {isUsed ? "(Already used)" : ""}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                     </div>
@@ -951,10 +992,6 @@ const AddProductForm: React.FC<AddProductProps> = ({
                   value={typeOfPackage}
                   onChange={(e) => setTypeOfPackage(e.target.value as any)}
                 >
-                  <option value="PLANT_BOX">Plant Box</option>
-                  <option value="PLANT_MAILER">Plant Mailer</option>
-                  <option value="NURSERY_POT_WRAP">Nursery Pot Wrap</option>
-                  <option value="POLY_BAG">Poly Bag</option>
                   <option value="GIFT_BOX">Gift Box</option>
                   <option value="SERVICE_ONLY">Service Only</option>
                 </select>
