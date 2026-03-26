@@ -7,6 +7,7 @@ interface ToolbarProps {
   onAdd?: () => void;
   status?: string;
   setStatus?: (value: string) => void;
+  mode?: boolean;
 }
 
 const Adder: React.FC<ToolbarProps> = ({
@@ -16,6 +17,7 @@ const Adder: React.FC<ToolbarProps> = ({
   onAdd,
   status,
   setStatus,
+  mode,
 }) => {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -29,8 +31,13 @@ const Adder: React.FC<ToolbarProps> = ({
           <option value="">Filter</option>
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
+          {mode && (
+            <>
+              <option value="Simple">Simple</option>
+              <option value="Variant">Variant</option>
+            </>
+          )}
         </select>
-
         <div className="relative w-full sm:w-auto">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-defined-black" />
           <input

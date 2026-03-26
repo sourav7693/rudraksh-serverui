@@ -65,6 +65,7 @@ const Header: React.FC = () => {
           permission: "communication_provider",
         },
         { label: "Users", path: "/admin-users", permission: "users" },
+        { label: "Media", path: "/admin-media", permission: "slider" },
       ],
     },
   ];

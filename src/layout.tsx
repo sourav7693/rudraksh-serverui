@@ -18,6 +18,7 @@ import BulkMarketing from "./pages/BulkMarketing";
 import Users from "./pages/Users";
 import CommuicationProvider from "./pages/CommuicationProvider";
 import Reviews from "./pages/Reviews";
+import MediaPage from "./pages/MediaPage";
 // import other pages…
 
 const Layout = () => {
@@ -126,6 +127,14 @@ const Layout = () => {
           element={
             <ProtectedRoute permission="slider">
               <Slider />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-media"
+          element={
+            <ProtectedRoute permission="slider">
+              <MediaPage />
             </ProtectedRoute>
           }
         />

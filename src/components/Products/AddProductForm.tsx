@@ -9,6 +9,7 @@ import "quill/dist/quill.snow.css";
 import type { PickupItem } from "../picup/PickupManagment";
 import WordLikeDescriptionBox from "../../global/WordLikeDescriptionBox";
 import SpecificationInProduct from "./SpecificationInProduct";
+import toast from "react-hot-toast";
 const api = import.meta.env.VITE_BASE_URL;
 interface AddProductProps {
   open: boolean;
@@ -261,24 +262,41 @@ const AddProductForm: React.FC<AddProductProps> = ({
     }
   }, [open]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setCoverImage(f);
-      setPreview(URL.createObjectURL(f));
-    }
-  };
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const f = e.target.files?.[0];
 
-  const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  if (!f) return;
 
-    const pv = files.map((file) => URL.createObjectURL(file));
+  if (f.size > 1024 * 1024) {
+    toast.error("Cover image must be less than 1MB");
+    e.target.value = "";
+    return;
+  }
 
-    setImages((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...pv]);
+  setCoverImage(f);
+  setPreview(URL.createObjectURL(f));
+};
 
-    e.target.value = ""; // allow reselecting same images
-  };
+ const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const files = Array.from(e.target.files || []);
+
+   const validFiles: File[] = [];
+
+   files.forEach((file) => {
+     if (file.size > 1024 * 1024) {
+       toast.error(`${file.name} is larger than 1MB`);
+     } else {
+       validFiles.push(file);
+     }
+   });
+
+   const pv = validFiles.map((file) => URL.createObjectURL(file));
+
+   setImages((prev) => [...prev, ...validFiles]);
+   setPreviews((prev) => [...prev, ...pv]);
+
+   e.target.value = "";
+ };
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
@@ -352,11 +370,15 @@ const toggleVariableValue = (index: number, value: string) => {
   };
 
   const submit = async () => {
-    if (type === "Variable" && !selectedParent)
-      return alert("Please select a parent product for this variant");
+    if (type === "Variable" && !selectedParent){
+      toast.error("Please select a parent product for this variant");
+      return;
+    }
     console.log("selected p", selectedParent);
-    if (variables.some((v) => !v.name || v.values.length === 0))
-      return alert("Please fill all variable details");
+    if (variables.some((v) => !v.name || v.values.length === 0)){
+      toast.error("Please fill all variable details");
+      return;
+    }
     if (type === "Variable") {
       if (
         !name ||
@@ -368,7 +390,7 @@ const toggleVariableValue = (index: number, value: string) => {
         !attributes ||
         !selectedParent
       )
-        return alert("All fields are required");
+        return toast.error("All fields are required");
     } else if (
       !name ||
       !shortDescription ||
@@ -380,9 +402,9 @@ const toggleVariableValue = (index: number, value: string) => {
       !categoryLevel ||
       !attributes
     )
-      return alert("All fields are required");
+      return toast.error("All fields are required");
 
-    if (!coverImage && !editData) return alert("Cover image required");
+    if (!coverImage && !editData) return toast.error("Cover image required");
 
     const fd = new FormData();
     const price =
@@ -433,7 +455,7 @@ const toggleVariableValue = (index: number, value: string) => {
     // CREATE VARIANT
     if (type === "Variable" && !editData) {
       if (!selectedParent)
-        return alert("Please select a parent product for this variant");
+        return toast.error("Please select a parent product for this variant");
       fd.append("parentProduct", selectedParent._id);
       url = `${import.meta.env.VITE_BASE_URL}/api/product/${
         selectedParent._id
@@ -468,13 +490,38 @@ const toggleVariableValue = (index: number, value: string) => {
         body: fd,
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
 
-      if (res.ok) {
-        alert(editData ? "Product updated!" : "Product added!");
-        onSuccess();
-        onClose();
-      } else alert(data.message || "Failed!");
+      if (!res.ok) {
+        // 🔥 Custom readable errors
+        const message =
+          data?.message ||
+          data?.error ||
+          (res.status === 413
+            ? "File too large. Please upload images under allowed size."
+            : res.status === 400
+              ? "Invalid data. Please check all required fields."
+              : res.status === 401
+                ? "Unauthorized. Please login again."
+                : res.status === 404
+                  ? "API not found. Contact developer."
+                  : "Something went wrong while uploading product.");
+
+        throw new Error(message);
+      }
+
+      toast.success(
+        editData
+          ? "Product updated successfully!"
+          : "Product added successfully!",
+      );
+      onSuccess();
+      onClose();
       setName("");
       setShortDescription("");
       setLongDescription("");
@@ -495,11 +542,15 @@ const toggleVariableValue = (index: number, value: string) => {
 
       setWeight(0);
       setDimensions([{ no_of_box: "1", length: "", width: "", height: "" }]);
-      setTypeOfPackage("PLANT_BOX");
+      setTypeOfPackage("GIFT_BOX");
       setReturnPolicy("NO_RETURN_NO_REPLACEMENT");
-    } catch (err) {
-      console.error(err);
-      alert("Server error");
+    } catch (err: any) {
+      console.error("UPLOAD ERROR:", err);
+
+      toast.error(
+        err.message ||
+          "Upload failed. Please check your internet connection or try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -565,7 +616,10 @@ const toggleVariableValue = (index: number, value: string) => {
           </div>
           <div className="mt-4">
             <label className="block my-2 text-sm font-medium">
-              Short Description
+              Short Description{" "}
+              <span>
+                <sup className="text-xl text-red-500">*</sup>
+              </span>
             </label>
             <WordLikeDescriptionBox
               value={shortDescription}
@@ -574,7 +628,7 @@ const toggleVariableValue = (index: number, value: string) => {
           </div>
           <div className="mt-4">
             <label className="block my-2 text-sm font-medium">
-              Long Description
+              Long Description<sup className="text-xl text-red-500">*</sup>
             </label>
 
             <WordLikeDescriptionBox
@@ -593,7 +647,7 @@ const toggleVariableValue = (index: number, value: string) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="font-semibold block mb-1">
-                Select Category
+                Select Category <sup className="text-xl text-red-500">*</sup>
               </label>
 
               {/* First Level Dropdown */}
@@ -653,7 +707,9 @@ const toggleVariableValue = (index: number, value: string) => {
             )} */}
 
             <div>
-              <label className="font-semibold block mb-1">Select Pickup</label>
+              <label className="font-semibold block mb-1">
+                Select Pickup <sup className="text-xl text-red-500">*</sup>
+              </label>
               <select
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem]"
                 value={pickup}
@@ -671,7 +727,9 @@ const toggleVariableValue = (index: number, value: string) => {
 
           <div className="grid grid-cols-2 gap-3">
             <div className=" flex flex-col gap-2">
-              <label>Cover Image</label>
+              <label>
+                Cover Image <sup className="text-xl text-red-500">*</sup>
+              </label>
               <input
                 type="file"
                 accept="image/*"
@@ -715,7 +773,9 @@ const toggleVariableValue = (index: number, value: string) => {
 
           <div className="grid grid-cols-3 gap-3">
             <div className=" flex flex-col gap-2">
-              <label>Product Type</label>
+              <label>
+                Product Type <sup className="text-xl text-red-500">*</sup>
+              </label>
               <select
                 value={type}
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem]"
@@ -726,7 +786,9 @@ const toggleVariableValue = (index: number, value: string) => {
               </select>
             </div>
             <div className=" flex flex-col gap-2">
-              <label htmlFor="mrp">MRP</label>
+              <label htmlFor="mrp">
+                MRP <sup className="text-xl text-red-500">*</sup>
+              </label>
               <input
                 type="number"
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md h-[3.5rem]"
@@ -737,7 +799,9 @@ const toggleVariableValue = (index: number, value: string) => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="price">Price</label>
+              <label htmlFor="price">
+                Price <sup className="text-xl text-red-500">*</sup>
+              </label>
               <input
                 type="number"
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md h-[3.5rem]"
@@ -751,7 +815,9 @@ const toggleVariableValue = (index: number, value: string) => {
               />
             </div>
             <div className=" flex flex-col gap-2">
-              <label htmlFor="stock">Stock</label>
+              <label htmlFor="stock">
+                Stock <sup className="text-xl text-red-500">*</sup>
+              </label>
               <input
                 type="number"
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md h-[3.5rem]"
@@ -761,7 +827,7 @@ const toggleVariableValue = (index: number, value: string) => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="discount">Discount</label>
+              <label htmlFor="discount">Discount </label>
               <input
                 type="number"
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md h-[3.5rem]"
@@ -773,7 +839,9 @@ const toggleVariableValue = (index: number, value: string) => {
               />
             </div>
             <div className=" flex flex-col gap-2">
-              <label htmlFor="brand">Brand</label>
+              <label htmlFor="brand">
+                Brand <span className="text-xl/0 text-red-500">*</span>
+              </label>
 
               <select
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem]"
@@ -838,7 +906,7 @@ const toggleVariableValue = (index: number, value: string) => {
                         >
                           <option value="" disabled>
                             Select an option
-                          </option>                          
+                          </option>
                           {backendVar.value.map((value: string) => {
                             const isUsed = getUsedValues(
                               variable.name,
@@ -972,7 +1040,12 @@ const toggleVariableValue = (index: number, value: string) => {
             </h1>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <label htmlFor="weight">Weight (grams)</label>
+                <label htmlFor="weight">
+                  Weight (grams){" "}
+                  <span className="font-bold text-red-500">
+                    [Max 100Kgs allowed] <sup>*</sup>
+                  </span>
+                </label>
                 <input
                   type="number"
                   id="weight"

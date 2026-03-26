@@ -41,7 +41,9 @@ const SpecificationInProduct: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <h1 className="text-base font-semibold">Specifications</h1>
+      <h1 className="text-base font-semibold">
+        Specifications <sup className="text-xl text-red-500">*</sup>
+      </h1>
 
       {specifications.map((spec, index) => (
         <div key={index} className="flex gap-4 items-center">

@@ -171,6 +171,7 @@ const ProductManagement: React.FC = () => {
           setOpenForm(true);
           setPopupKey((k) => k + 1);
         }}
+        mode={true}
         status={status}
         setStatus={(value) => updateFilters("status", value)}
       />
