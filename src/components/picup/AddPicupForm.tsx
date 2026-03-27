@@ -137,6 +137,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
         <div className="mt-5 space-y-4">
           <div>
             <label>Name</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={name}
@@ -147,6 +148,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
 
           <div>
             <label>Phone</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={phone}
@@ -156,6 +158,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
           </div>
           <div>
             <label>Email</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="email"
               value={email}
@@ -166,7 +169,11 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
 
           <div>
             <label>
-              Address <span className="font-semibold">( Home / Flat No, Road No. is mandatory )</span>
+              Address{" "}
+              <span className="font-semibold">
+                ( Home / Flat No, Road No. is mandatory )
+              </span>
+              <span className="text-xl/0 text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -178,11 +185,15 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
           </div>
           <div>
             <label>
-              Pickup Location <span className="font-semibold">( Landmark, Area, Colony etc. )</span>
+              Pickup Location{" "}
+              <span className="font-semibold">
+                ( Landmark, Area, Colony etc. )
+              </span>
+              <span className="text-xl/0 text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={pickup_location}              
+              value={pickup_location}
               onChange={(e) => setPickupLocation(e.target.value)}
               className="w-full border border-gray-200 rounded px-3 py-2"
             />
@@ -190,6 +201,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
 
           <div>
             <label>City</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={city}
@@ -200,6 +212,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
 
           <div>
             <label>State</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={state}
@@ -209,6 +222,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
           </div>
           <div>
             <label>Country</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={country}
@@ -219,6 +233,7 @@ const AddPickupForm: React.FC<AddPickupFormProps> = ({
 
           <div>
             <label>Pin</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={pin_code}

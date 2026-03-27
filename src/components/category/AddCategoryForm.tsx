@@ -473,7 +473,7 @@ export default function AddCategoryForm({
                     const ancestorDepth = ancestorIdx + 1; // 1-based depth
                     const options = getAncestorOptions(
                       ancestorDepth,
-                      lvl.parentChain || []
+                      lvl.parentChain || [],
                     );
                     return (
                       <div key={ancestorDepth} className="mb-3">
@@ -492,7 +492,7 @@ export default function AddCategoryForm({
                             handleAncestorChange(
                               index,
                               ancestorDepth,
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         >
@@ -508,28 +508,36 @@ export default function AddCategoryForm({
                         </select>
                       </div>
                     );
-                  }
+                  },
                 )}
                 <div className="flex flex-row gap-4">
                   {/* Name */}
                   <div className=" flex flex-col gap-6 w-full">
-                    <input
-                      type="text"
-                      className="border p-2 border-gray-200 w-full rounded-md h-[3.5rem] outline-none"
-                      placeholder="Name"
-                      value={lvl.name}
-                      onChange={(e) => handleNameChange(index, e.target.value)}
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        className="border p-2 border-gray-200 w-full rounded-md h-[3.5rem] outline-none"
+                        placeholder="Name"
+                        value={lvl.name}
+                        onChange={(e) =>
+                          handleNameChange(index, e.target.value)
+                        }
+                      />
+                      <span className="text-xl/0 text-red-500">*</span>
+                    </div>
 
                     {/* Image */}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="border p-2  border-gray-200 w-full rounded-md  h-[3.5rem] outline-none  "
-                      onChange={(e) =>
-                        handleFileChange(index, e.target.files?.[0] || null)
-                      }
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="border p-2  border-gray-200 w-full rounded-md  h-[3.5rem] outline-none  "
+                        onChange={(e) =>
+                          handleFileChange(index, e.target.files?.[0] || null)
+                        }
+                      />
+                        <span className="text-xl/0 text-red-500">*</span>
+                    </div>
                   </div>
                   <div className="w-auto">
                     <div className="w-[8.5rem] h-[8.5rem] bg-gray-100 rounded-md overflow-hidden border border-gray-200">
@@ -560,7 +568,7 @@ export default function AddCategoryForm({
                     // Update mode (when editing)
                     <>
                       <button
-                       className="bg-green-600/30 text-green-900 hover:bg-green-600 hover:text-white transform duration-700 font-semibold p-2 flex-1 disabled:opacity-60"
+                        className="bg-green-600/30 text-green-900 hover:bg-green-600 hover:text-white transform duration-700 font-semibold p-2 flex-1 disabled:opacity-60"
                         disabled={isSavingThis(index)}
                         onClick={() => updateLevel(index)}
                         type="button"

@@ -85,19 +85,20 @@ const AddVariableForm: React.FC<VariableFormProps> = ({
         open ? "translate-x-0" : "translate-x-full"
       }`}
     >
-
       <div className="flex justify-between items-center  pb-3">
-      <h2 className="text-lg font-semibold mb-4">
-        {isEdit ? "Edit Variable" : "Add Variable"}
-      </h2>
-      <button className="text-2xl" onClick={onClose}>
-            ×
-          </button>
-</div>
+        <h2 className="text-lg font-semibold mb-4">
+          {isEdit ? "Edit Variable" : "Add Variable"}
+        </h2>
+        <button className="text-2xl" onClick={onClose}>
+          ×
+        </button>
+      </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* NAME */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Name</label>
+          <label className="block text-sm font-semibold mb-1">
+            Name <span className="text-xl/0 text-red-500">*</span>
+          </label>
           <input
             type="text"
             className="w-full border rounded px-3 py-2 outline-none"
@@ -109,7 +110,9 @@ const AddVariableForm: React.FC<VariableFormProps> = ({
 
         {/* VALUE ARRAY */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Values</label>
+          <label className="block text-sm font-semibold mb-1">
+            Values <span className="text-xl/0 text-red-500">*</span>
+          </label>
 
           {value.map((val, idx) => (
             <div key={idx} className="flex gap-2 mb-2">

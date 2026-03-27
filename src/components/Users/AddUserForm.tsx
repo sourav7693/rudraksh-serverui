@@ -11,7 +11,7 @@ const AVAILABLE_PERMISSIONS = [
   { label: "Customers", value: "customers" },
   { label: "Categories", value: "category" },
   { label: "Brands", value: "brand" },
-  { label: "Pickup", value: "pickup" },
+  { label: "User", value: "pickup" },
   { label: "Attributes", value: "attributes" },
   { label: "Variables", value: "variables" },
   { label: "Coupons", value: "coupon" },
@@ -112,7 +112,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
       <div className="relative ml-auto w-full sm:w-[750px] h-full bg-white shadow-2xl overflow-y-auto p-5">
         <div className="flex justify-between items-center border-b border-gray-200 outline-none-b pb-3">
           <h2 className="text-xl font-semibold">
-            {editData ? "Edit Pickup" : "Add Pickup"}
+            {editData ? "Edit User" : "Add User"}
           </h2>
           <button className="text-2xl" onClick={onClose}>
             ×
@@ -120,7 +120,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
         </div>
 
         <div className="mt-5 space-y-4">
-          <div>
+          <div className="flex gap-2">
             <input
               type="text"
               placeholder="Name"
@@ -128,9 +128,10 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
               onChange={(e) => setUserName(e.target.value)}
               className="w-full border border-gray-200 outline-none rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
 
-          <div>
+          <div className="flex gap-2">
             <input
               type="text"
               maxLength={10}
@@ -140,8 +141,9 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
               onChange={(e) => setMobile(e.target.value)}
               className="w-full border border-gray-200 outline-none rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
-          <div>
+          <div className="flex gap-2">
             <input
               type="email"
               placeholder="Email"
@@ -149,9 +151,10 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-200 outline-none rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
 
-          <div>
+          <div className="flex gap-2">
             <input
               placeholder="Password"
               type={`${editData ? "text" : "password"}`}
@@ -159,6 +162,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-200 outline-none rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
 
           <div>

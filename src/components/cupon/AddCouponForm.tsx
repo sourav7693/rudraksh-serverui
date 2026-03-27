@@ -123,10 +123,9 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
           </button>
         </div>
 
-        <div className="mt-5 space-y-4">          
-
+        <div className="mt-5 space-y-4">
           {/* Code */}
-          <div>            
+          <div className="flex gap-2">
             <input
               type="text"
               value={name}
@@ -134,8 +133,9 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
               onChange={(e) => setName(e.target.value)}
               className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
-          <div>            
+          <div className="flex gap-2">
             <input
               type="text"
               value={code}
@@ -143,10 +143,11 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
               onChange={(e) => setCode(e.target.value)}
               className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
             />
+            <span className="text-xl/0 text-red-500">*</span>
           </div>
 
           {/* Discount Type */}
-          <div>            
+          <div>
             <select
               value={discountType}
               onChange={(e) =>
@@ -163,6 +164,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
           {/* Discount Value */}
           <div>
             <label>Discount Value</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="number"
               value={discountValue}
@@ -174,6 +176,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label>Minimum Order Amount</label>
+              <span className="text-xl/0 text-red-500">*</span>
               <input
                 type="number"
                 value={minOrderAmount}
@@ -184,10 +187,10 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
 
             <div>
               <label>Max Discount Amount</label>
+              <span className="text-xl/0 text-red-500">*</span>
               <input
                 type="number"
                 value={maxDiscountAmount}
-                
                 onChange={(e) => setMaxDiscountAmount(Number(e.target.value))}
                 className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
               />
@@ -197,6 +200,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label>Start Date</label>
+              <span className="text-xl/0 text-red-500">*</span>
               <input
                 type="date"
                 value={startDate}
@@ -207,6 +211,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
 
             <div>
               <label>Expiration Date</label>
+              <span className="text-xl/0 text-red-500">*</span>
               <input
                 type="date"
                 value={expirationDate}
@@ -219,6 +224,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
           {/* Usage Limit */}
           <div>
             <label>Usage Limit</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="number"
               value={usageLimit}
@@ -229,18 +235,17 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
 
           {/* Status */}
           {editData && (
-            
-          <div>
-            <label>Status</label>
-            <select
-              value={status ? "true" : "false"}
-              onChange={(e) => setStatus(e.target.value === "true")}
-              className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
-            >
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </select>
-          </div>
+            <div>
+              <label>Status</label>
+              <select
+                value={status ? "true" : "false"}
+                onChange={(e) => setStatus(e.target.value === "true")}
+                className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
+              >
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
           )}
 
           {/* Buttons */}

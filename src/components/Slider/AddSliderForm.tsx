@@ -125,6 +125,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           {/* Name */}
           <div>
             <label>Name</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={name}
@@ -136,6 +137,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           {/* Image */}
           <div>
             <label>Slider Image</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="file"
               accept="image/*"

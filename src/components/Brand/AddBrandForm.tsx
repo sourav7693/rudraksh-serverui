@@ -115,6 +115,7 @@ const AddBrandForm: React.FC<AddBrandFormProps> = ({
           {/* Name */}
           <div>
             <label>Name</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="text"
               value={name}
@@ -126,6 +127,7 @@ const AddBrandForm: React.FC<AddBrandFormProps> = ({
           {/* Image */}
           <div>
             <label>Brand Image</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               type="file"
               accept="image/*"

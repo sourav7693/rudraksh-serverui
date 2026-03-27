@@ -165,13 +165,14 @@ const submit = async () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6 bg-white rounded-xl shadow">
-
       {/* Provider */}
       <div>
-        <label className="block mb-1 font-medium">Provider</label>
+        <label className="block mb-1 font-medium">
+          Provider <span className="text-xl/0 text-red-500">*</span>
+        </label>
         <select
           value={provider}
-           disabled={isEdit}
+          disabled={isEdit}
           onChange={(e) => setProvider(e.target.value as ProviderType)}
           className="w-full border px-3 py-2 rounded-md"
         >
@@ -220,48 +221,58 @@ const submit = async () => {
 
       {provider === "WHATSAPP" && (
         <div className="border p-4 rounded-lg bg-gray-50">
-          <h3 className="font-semibold mb-3">WhatsApp Credentials</h3>
+          <h3 className="font-semibold mb-3">
+            WhatsApp Credentials{" "}
+            <span className="text-xl/0 text-red-500">*</span>
+          </h3>
           <div className="grid grid-cols-1 gap-3">
             <div className=" flex flex-row gap-2 items-center">
-            <label htmlFor="" className="w-[20%]">Auth Key :- </label>
-            <input
-              placeholder="Auth Key"
-              className="border px-3 py-2 rounded w-full"
-              value={whatsappCredentials.auth_key}
-              onChange={(e) =>
-                setWhatsappCredentials({
-                  ...whatsappCredentials,
-                  auth_key: e.target.value,
-                })
-              }
-            />
+              <label htmlFor="" className="w-[20%]">
+                Auth Key :-{" "}
+              </label>
+              <input
+                placeholder="Auth Key"
+                className="border px-3 py-2 rounded w-full"
+                value={whatsappCredentials.auth_key}
+                onChange={(e) =>
+                  setWhatsappCredentials({
+                    ...whatsappCredentials,
+                    auth_key: e.target.value,
+                  })
+                }
+              />
             </div>
             <div className=" flex flex-row gap-2 items-center">
-                <label htmlFor="" className=" w-[20%]">App Key:- </label>
-            <input
-              placeholder="App Key"
-              className="border px-3 py-2 rounded w-full"
-              value={whatsappCredentials.app_key}
-              onChange={(e) =>
-                setWhatsappCredentials({
-                  ...whatsappCredentials,
-                  app_key: e.target.value,
-                })
-              }
-            /></div>
+              <label htmlFor="" className=" w-[20%]">
+                App Key:-{" "}
+              </label>
+              <input
+                placeholder="App Key"
+                className="border px-3 py-2 rounded w-full"
+                value={whatsappCredentials.app_key}
+                onChange={(e) =>
+                  setWhatsappCredentials({
+                    ...whatsappCredentials,
+                    app_key: e.target.value,
+                  })
+                }
+              />
+            </div>
             <div className=" flex flex-row gap-2 items-center">
-                <label htmlFor="" className=" w-[20%]">Device Id:- </label>
-            <input
-              placeholder="Device ID"
-              className="border px-3 py-2 rounded w-full"
-              value={whatsappCredentials.device_id}
-              onChange={(e) =>
-                setWhatsappCredentials({
-                  ...whatsappCredentials,
-                  device_id: e.target.value,
-                })
-              }
-            />
+              <label htmlFor="" className=" w-[20%]">
+                Device Id:-{" "}
+              </label>
+              <input
+                placeholder="Device ID"
+                className="border px-3 py-2 rounded w-full"
+                value={whatsappCredentials.device_id}
+                onChange={(e) =>
+                  setWhatsappCredentials({
+                    ...whatsappCredentials,
+                    device_id: e.target.value,
+                  })
+                }
+              />
             </div>
           </div>
         </div>
@@ -272,12 +283,11 @@ const submit = async () => {
         <h3 className="font-semibold text-lg">Purpose Configuration</h3>
 
         {PURPOSES.map((purpose) => (
-          <div
-            key={purpose}
-            className="border rounded-lg p-4 bg-gray-50"
-          >
+          <div key={purpose} className="border rounded-lg p-4 bg-gray-50">
             <div className="flex justify-between items-center mb-3">
-              <span className="font-medium">{purpose}</span>
+              <span className="font-medium">
+                {purpose} <span className="text-xl/0 text-red-500">*</span>
+              </span>
               <input
                 type="checkbox"
                 checked={purposes[purpose].enabled}
@@ -292,11 +302,7 @@ const submit = async () => {
                 className="border px-3 py-2 rounded"
                 value={purposes[purpose].templateId || ""}
                 onChange={(e) =>
-                  handlePurposeChange(
-                    purpose,
-                    "templateId",
-                    e.target.value
-                  )
+                  handlePurposeChange(purpose, "templateId", e.target.value)
                 }
               />
               <input
@@ -305,11 +311,7 @@ const submit = async () => {
                 className="border px-3 py-2 rounded"
                 value={purposes[purpose].templateName || ""}
                 onChange={(e) =>
-                  handlePurposeChange(
-                    purpose,
-                    "templateName",
-                    e.target.value
-                  )
+                  handlePurposeChange(purpose, "templateName", e.target.value)
                 }
               />
             </div>
@@ -318,12 +320,12 @@ const submit = async () => {
       </div>
 
       {/* Submit */}
-    <button
-  onClick={submit}
-  className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium"
->
-  {isEdit ? "Update Configuration" : "Save Configuration"}
-</button>
+      <button
+        onClick={submit}
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium"
+      >
+        {isEdit ? "Update Configuration" : "Save Configuration"}
+      </button>
     </div>
   );
 };

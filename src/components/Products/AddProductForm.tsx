@@ -608,7 +608,7 @@ const toggleVariableValue = (index: number, value: string) => {
             <input
               className="w-full border border-gray-200 outline-none px-3 py-2 rounded-md"
               type="text"
-              placeholder="Enter Product Title"
+              placeholder="Enter Product Title *"
               value={name}
               required
               onChange={(e) => setName(e.target.value)}
@@ -617,9 +617,7 @@ const toggleVariableValue = (index: number, value: string) => {
           <div className="mt-4">
             <label className="block my-2 text-sm font-medium">
               Short Description{" "}
-              <span>
-                <sup className="text-xl text-red-500">*</sup>
-              </span>
+              <span className="text-xl/0 text-red-500">*</span>
             </label>
             <WordLikeDescriptionBox
               value={shortDescription}
@@ -628,7 +626,7 @@ const toggleVariableValue = (index: number, value: string) => {
           </div>
           <div className="mt-4">
             <label className="block my-2 text-sm font-medium">
-              Long Description<sup className="text-xl text-red-500">*</sup>
+              Long Description<span className="text-xl/0 text-red-500">*</span>
             </label>
 
             <WordLikeDescriptionBox
@@ -647,7 +645,7 @@ const toggleVariableValue = (index: number, value: string) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="font-semibold block mb-1">
-                Select Category <sup className="text-xl text-red-500">*</sup>
+                Select Category<span className="text-xl/0 text-red-500">*</span>
               </label>
 
               {/* First Level Dropdown */}
@@ -708,7 +706,7 @@ const toggleVariableValue = (index: number, value: string) => {
 
             <div>
               <label className="font-semibold block mb-1">
-                Select Pickup <sup className="text-xl text-red-500">*</sup>
+                Select Pickup <span className="text-xl/0 text-red-500">*</span>
               </label>
               <select
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem]"
@@ -728,7 +726,7 @@ const toggleVariableValue = (index: number, value: string) => {
           <div className="grid grid-cols-2 gap-3">
             <div className=" flex flex-col gap-2">
               <label>
-                Cover Image <sup className="text-xl text-red-500">*</sup>
+                Cover Image <span className="text-xl/0 text-red-500">*</span>
               </label>
               <input
                 type="file"
@@ -774,7 +772,7 @@ const toggleVariableValue = (index: number, value: string) => {
           <div className="grid grid-cols-3 gap-3">
             <div className=" flex flex-col gap-2">
               <label>
-                Product Type <sup className="text-xl text-red-500">*</sup>
+                Product Type <span className="text-xl/0 text-red-500">*</span>
               </label>
               <select
                 value={type}
@@ -787,7 +785,7 @@ const toggleVariableValue = (index: number, value: string) => {
             </div>
             <div className=" flex flex-col gap-2">
               <label htmlFor="mrp">
-                MRP <sup className="text-xl text-red-500">*</sup>
+                MRP <span className="text-xl/0 text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -800,7 +798,7 @@ const toggleVariableValue = (index: number, value: string) => {
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="price">
-                Price <sup className="text-xl text-red-500">*</sup>
+                Price <span className="text-xl/0 text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -816,7 +814,7 @@ const toggleVariableValue = (index: number, value: string) => {
             </div>
             <div className=" flex flex-col gap-2">
               <label htmlFor="stock">
-                Stock <sup className="text-xl text-red-500">*</sup>
+                Stock <span className="text-xl/0 text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -944,7 +942,8 @@ const toggleVariableValue = (index: number, value: string) => {
           {type === "Variable" && (
             <div className="mt-4">
               <label className="font-semibold block mb-1">
-                Select Parent Product (Required)
+                Select Parent Product (Required){" "}
+                <span className="text-xl/0 text-red-500">*</span>
               </label>
 
               {/* SEARCH INPUT */}
@@ -997,7 +996,7 @@ const toggleVariableValue = (index: number, value: string) => {
                             },
                           ],
                         );
-                        setTypeOfPackage(p.typeOfPackage || "PLANT_BOX");
+                        setTypeOfPackage(p.typeOfPackage || "GIFT_BOX");
                         setReturnPolicy(
                           p.returnPolicy || "NO_RETURN_NO_REPLACEMENT",
                         );
@@ -1042,8 +1041,8 @@ const toggleVariableValue = (index: number, value: string) => {
               <div className="flex flex-col gap-2">
                 <label htmlFor="weight">
                   Weight (grams){" "}
-                  <span className="font-bold text-red-500">
-                    [Max 100Kgs allowed] <sup>*</sup>
+                  <span className="text-sm/0 font-medium text-red-500">
+                    (Min 100gms, Max 100Kgs)*
                   </span>
                 </label>
                 <input
@@ -1092,7 +1091,10 @@ const toggleVariableValue = (index: number, value: string) => {
                 className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-100"
                 onClick={() => setShowDimensions(!showDimensions)}
               >
-                <label className="font-semibold text-sm">Dimensions (cm)</label>
+                <label className="font-semibold text-sm">
+                  Dimensions (cm){" "}
+                  <span className="text-xl/0 text-red-500">*</span>
+                </label>
               </div>
 
               <div className="space-y-2 p-3 bg-white border border-gray-200 rounded-md">

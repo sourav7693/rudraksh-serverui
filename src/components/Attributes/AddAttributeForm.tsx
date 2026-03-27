@@ -61,6 +61,7 @@ const AddAttributeForm: React.FC<Props> = ({
         <div className="mt-5 space-y-4">
           <div>
             <label>Name</label>
+            <span className="text-xl/0 text-red-500">*</span>
             <input
               className="border w-full px-3 py-2 rounded"
               value={name}

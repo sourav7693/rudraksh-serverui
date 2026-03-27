@@ -57,7 +57,7 @@ const AddMedia: React.FC<AddMediaProps> = ({
 
         <div>
           <label className="text-xs font-bold uppercase text-slate-400 mb-1.5 block tracking-wider">
-            Asset Name
+            Asset Name<span className="text-xl/0 text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -75,7 +75,7 @@ const AddMedia: React.FC<AddMediaProps> = ({
         {type === "video" && (
           <div>
             <label className="text-xs font-bold uppercase text-slate-400 mb-1.5 block tracking-wider">
-              Video URL
+              Video URL<span className="text-xl/0 text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -94,7 +94,8 @@ const AddMedia: React.FC<AddMediaProps> = ({
         <div className="relative group">
           <label className="text-xs font-bold uppercase text-slate-400 mb-1.5 block tracking-wider">
             {type === "image" ? "Upload Image" : "Video Thumbnail"}{" "}
-            <span className="text-[10px] lowercase font-normal">(Max 1MB)</span>
+            <span className="text-[10px] lowercase font-normal">(Max 1MB)</span>{" "}
+            <span className="text-xl/0 text-red-500">*</span>
           </label>
           <div className="border-2 border-dashed border-slate-200 rounded-2xl p-2 hover:border-defined-blue transition-colors bg-slate-50 text-center cursor-pointer relative overflow-hidden min-h-[140px] flex items-center justify-center">
             <input
