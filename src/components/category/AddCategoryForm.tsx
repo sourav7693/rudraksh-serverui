@@ -464,7 +464,8 @@ export default function AddCategoryForm({
             return (
               <div key={index} className="p-4 rounded shadow">
                 <h2 className="font-semibold mb-3">
-                  {label} (Level {lvl.level})
+                  {label} (Level {lvl.level}){" "}
+                  <span className="text-xl/0 text-red-500">*</span>
                 </h2>
 
                 {/* Render cascading ancestor selects for this block (for levels > 1) */}
@@ -536,7 +537,7 @@ export default function AddCategoryForm({
                           handleFileChange(index, e.target.files?.[0] || null)
                         }
                       />
-                        <span className="text-xl/0 text-red-500">*</span>
+                      <span className="text-xl/0 text-red-500">*</span>
                     </div>
                   </div>
                   <div className="w-auto">

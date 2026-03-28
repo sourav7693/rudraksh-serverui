@@ -116,7 +116,8 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
       <div className="relative ml-auto w-full sm:w-[750px] h-full bg-white shadow-xl overflow-y-auto p-5">
         <div className="flex justify-between items-center border-b border-gray-200 outline-none placeholder:text-gray-500-b pb-3">
           <h2 className="text-xl font-semibold">
-            {editData ? "Edit Coupon" : "Add Coupon"}
+            {editData ? "Edit Coupon" : "Add Coupon"}{" "}
+            <span className="text-xl/0 text-red-500">*</span>
           </h2>
           <button className="text-2xl" onClick={onClose}>
             ×

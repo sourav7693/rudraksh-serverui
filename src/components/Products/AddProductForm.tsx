@@ -385,8 +385,7 @@ const toggleVariableValue = (index: number, value: string) => {
         !shortDescription ||
         !longDescription ||
         !mrp ||
-        !stock ||
-        !discount ||
+        !stock ||        
         !attributes ||
         !selectedParent
       )
@@ -396,8 +395,7 @@ const toggleVariableValue = (index: number, value: string) => {
       !shortDescription ||
       !longDescription ||
       !mrp ||
-      !stock ||
-      !discount ||
+      !stock ||      
       !brand ||
       !categoryLevel ||
       !attributes
@@ -594,7 +592,11 @@ const toggleVariableValue = (index: number, value: string) => {
 
       <div className="relative ml-auto w-[70%]  bg-white h-full overflow-y-auto no-scrollbar p-5 shadow-xl">
         <h2 className="text-xl font-semibold mb-3 flex items-center justify-between">
-          {editData ? "Edit Product" : "Add Product"}
+          <span>
+            {" "}
+            {editData ? "Edit Product" : "Add Product"}{" "}
+            <span className="text-xl/0 text-red-500">*</span>
+          </span>
           <button
             className="text-xl leading-none hover:opacity-70 bg-red-500 text-white rounded-full size-6 flex items-center justify-center"
             onClick={onClose}
