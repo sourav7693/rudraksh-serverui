@@ -16,42 +16,64 @@ const AddSliderForm: React.FC<AddSliderFormProps> = ({
   onSuccess,
   editData,
 }) => {
-  const [name, setName] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>("");
+    const [mediaFile, setMediaFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string>("");
+    const [previewType, setPreviewType] = useState<"image" | "video" | null>(
+      null,
+    );
+    const [target, setTarget] = useState<"all" | "mobile" | "desktop">("all");
+  
+  const [name, setName] = useState("");  
   const [status, setStatus] = useState(true);
   const [loading, setLoading] = useState(false);
 
   // Load edit data
-  useEffect(() => {
-    if (editData) {
-      setName(editData.name);
-      setPreview(editData.image.url);
-      setStatus(editData.status ?? true);
-      setImageFile(null);
-    } else {
-      setName("");
-      setPreview("");
-      setStatus(true);
-      setImageFile(null);
-    }
-  }, [editData, open]);
+useEffect(() => {
+ if (editData) {
+   setName(editData.name);
+   setPreview(editData.media.url);
+   setPreviewType(editData.media.resource_type);
+   setStatus(editData.status ?? true);
+   setTarget(editData.target || "all"); // ✅ add this
+   setMediaFile(null);
+ } else {
+   setName("");
+   setPreview("");
+   setPreviewType(null);
+   setStatus(true);
+   setTarget("all"); // ✅ reset
+   setMediaFile(null);
+ }
+}, [editData, open]);
 
-const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
+  if (!file) return;
 
-  if (file) {
-    const maxSize = 1 * 1024 * 1024; // 1MB
+  const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
 
-  if (file.size > maxSize) {
-    toast.error("Image must be less than 1 MB 🚫");
-    e.target.value = ""; // reset input
+  if (!isImage && !isVideo) {
+    toast.error("Only image or video allowed 🚫");
     return;
   }
 
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
+  // Size validation
+  const maxSize = isVideo ? 10 * 1024 * 1024 : 1 * 1024 * 1024;
+
+  if (file.size > maxSize) {
+    toast.error(
+      isVideo
+        ? "Video must be less than 10MB 🚫"
+        : "Image must be less than 1MB 🚫",
+    );
+    e.target.value = "";
+    return;
   }
+
+  setMediaFile(file);
+  setPreview(URL.createObjectURL(file));
+  setPreviewType(isVideo ? "video" : "image");
 };
 
   const handleSubmit = async () => {
@@ -62,10 +84,10 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const formData = new FormData();
     formData.append("name", name);
-
+formData.append("target", target);
     // For update → image is optional
-    if (imageFile) {
-      formData.append("image", imageFile);
+    if (mediaFile) {
+      formData.append("media", mediaFile);
     }
 
     // Status optional
@@ -134,24 +156,47 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             />
           </div>
 
+          <div>
+            <label>Target Device</label>
+            <select
+              value={target}
+              onChange={(e) =>
+                setTarget(e.target.value as "all" | "mobile" | "desktop")
+              }
+              className="w-full border border-gray-200 rounded px-3 py-2 outline-none"
+            >
+              <option value="all">🌐 All Devices</option>
+              <option value="mobile">📱 Mobile</option>
+              <option value="desktop">💻 Desktop</option>
+            </select>
+          </div>
+
           {/* Image */}
           <div>
-            <label>Slider Image</label>
+            <label>Slider Media (Image / Video)</label>
             <span className="text-xl/0 text-red-500">*</span>
             <input
               type="file"
-              accept="image/*"
-              onChange={handleImageChange}
+              accept="image/*,video/*"
+              onChange={handleFileChange}
               className="w-full border border-gray-200 rounded px-3 py-2"
             />
 
-            {preview && (
-              <img
-                src={preview}
-                alt="preview"
-                className="mt-3 w-32 h-32 object-cover rounded border border-gray-200"
-              />
-            )}
+            {preview &&
+              (previewType === "image" ? (
+                <img
+                  src={preview}
+                  alt="preview"
+                  className="mt-3 size-full object-cover rounded border"
+                />
+              ) : (
+                <video
+                  src={preview}
+                  className="mt-3 size-full object-cover rounded border"
+                  controls
+                  muted
+                />
+              ))}
           </div>
 
           {/* Buttons */}
