@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { CouponItem } from "./CouponManagment";
+import toast from "react-hot-toast";
 
 interface AddCouponFormProps {
   open: boolean;
@@ -57,7 +58,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
 
   const handleSubmit = async () => {
     if ( !code) {
-      return alert("Coupon ID & Code are required!");
+      return toast.error("Coupon code is required!");
     }
 
     const body = {
@@ -93,15 +94,15 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
       const data = await res.json();
 
       if (res.ok) {
-        alert(editData ? "Coupon updated!" : "Coupon added!");
+        toast.success(editData ? "Coupon updated!" : "Coupon added!");
         onSuccess();
         onClose();
       } else {
-        alert(data.message || "Something went wrong!");
+        toast.error(data.message || "Something went wrong!");
       }
     } catch (err) {
       console.error(err);
-      alert("Server not responding");
+      toast.error("Server not responding or connection error");
     } finally {
       setLoading(false);
     }

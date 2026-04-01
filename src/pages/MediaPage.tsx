@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiImage,
@@ -62,7 +63,7 @@ const MediaPage = () => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.size > 1024 * 1024) {
-        alert("File size exceeds 1MB limit!");
+        toast.error("File size exceeds 1MB limit!");
         return;
       }
       setFile(selectedFile);
@@ -103,10 +104,11 @@ const MediaPage = () => {
       } else {
         await axios.post(`${import.meta.env.VITE_BASE_URL}/api/media`, data);
       }
+      toast.success(editingItem ? "Asset updated!" : "Asset added!");
       resetForm();
       fetchMedia();
-    } catch (err) {
-      alert("Save failed");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Save failed");
     } finally{
         setIsSaving(false)
     }
@@ -119,9 +121,10 @@ const MediaPage = () => {
         `${import.meta.env.VITE_BASE_URL}/api/media/${item._id}`,
         { status: newStatus },
       );
+      toast.success(`Status updated to ${newStatus}`);
       fetchMedia();
-    } catch (err) {
-      alert("Status update failed");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Status update failed");
     }
   };
 
@@ -129,9 +132,10 @@ const MediaPage = () => {
     if (window.confirm("Are you sure you want to delete this asset?")) {
       try {
         await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/media/${id}`);
+        toast.success("Asset deleted successfully");
         fetchMedia();
-      } catch (err) {
-        alert("Delete failed");
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Delete failed");
       }
     }
   };

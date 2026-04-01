@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import type { BrandItem } from "./BrandManagment";
+import toast from "react-hot-toast";
 
 interface AddBrandFormProps {
   open: boolean;
@@ -46,7 +47,7 @@ const AddBrandForm: React.FC<AddBrandFormProps> = ({
 
   const handleSubmit = async () => {
     if (!name) {
-      alert("Name is required");
+      toast.error("Name is required");
       return;
     }
 
@@ -81,15 +82,15 @@ const AddBrandForm: React.FC<AddBrandFormProps> = ({
       const data = await res.json();
 
       if (res.ok) {
-        alert(editData ? "Brand updated!" : "Brand added!");
+        toast.success(editData ? "Brand updated!" : "Brand added!");
         onSuccess();
         onClose();
       } else {
-        alert(data.message || "Something went wrong!");
+        toast.error(data.message || "Something went wrong!");
       }
     } catch (err) {
       console.error(err);
-      alert("Server not responding");
+      toast.error("Server not responding or connection error");
     } finally {
       setLoading(false);
     }

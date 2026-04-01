@@ -131,7 +131,7 @@ const PickupManagement: React.FC = () => {
                 <th className="p-3">Address</th>
                 <th className="p-3">Pin</th>
                 <th className="p-3">Mobile</th>
-                <th className="p-3">Status</th>
+                {/* <th className="p-3">Status</th> */}
                 <th className="p-3">Action</th>
               </tr>
             </thead>
@@ -143,13 +143,13 @@ const PickupManagement: React.FC = () => {
                   <td className="p-3">{item.address}</td>
                   <td className="p-3">{item.pin_code}</td>
                   <td className="p-3">{item.phone}</td>
-                  <td className="p-3">
+                  {/* <td className="p-3">
                     <Toggle
                       name="pickup"
                       id={item.pickupId}
                       status={item.status}
                     />
-                  </td>
+                  </td> */}
                   <td className="p-3 flex gap-2 text-blue-600">
                     <button onClick={() => setViewData(item)}>View</button>
                     {/* <button

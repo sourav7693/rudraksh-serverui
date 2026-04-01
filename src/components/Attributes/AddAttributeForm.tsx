@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { AttributeItem } from "./AttributeManagement";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
@@ -22,7 +23,7 @@ const AddAttributeForm: React.FC<Props> = ({
   }, [editData, open]);
 
   const handleSubmit = async () => {
-    if (!name.trim()) return alert("Name required");
+    if (!name.trim()) return toast.error("Name required");
 
     setLoading(true);
     const method = editData ? "PUT" : "POST";
@@ -40,10 +41,11 @@ const AddAttributeForm: React.FC<Props> = ({
     setLoading(false);
 
     if (res.ok) {
+      toast.success(editData ? "Attribute updated!" : "Attribute added!");
       onSuccess();
       onClose();
     } else {
-      alert(data.message);
+      toast.error(data.message || "Something went wrong!");
     }
   };
 

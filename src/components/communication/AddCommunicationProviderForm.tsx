@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 type ProviderType = "SMS" | "WHATSAPP";
 
@@ -138,7 +139,7 @@ const submit = async () => {
   // validation
   for (const [key, cfg] of Object.entries(purposes)) {
     if (cfg.enabled && !cfg.templateId && !cfg.templateName) {
-      return alert(`${key}: Template ID or Name required`);
+      return toast.error(`${key}: Template ID or Name required`);
     }
   }
 
@@ -155,10 +156,11 @@ const submit = async () => {
       );
     }
 
+    toast.success(isEdit ? "Configuration updated!" : "Configuration saved!");
     onSuccess();
     fetchProviders();
   } catch (err: any) {
-    alert(err?.response?.data?.message || "Server error");
+    toast.error(err?.response?.data?.message || "Server error");
   }
 };
 

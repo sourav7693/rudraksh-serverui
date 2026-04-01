@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import AddCategoryForm from "./AddCategoryForm";
 import { FaTrash } from "react-icons/fa";
 import Drawer from "../../global/Drawer";
@@ -173,17 +174,18 @@ export default function CategoryManagement() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Delete failed");
+        toast.error(data.message || "Delete failed");
         return;
       }
 
-      alert(data.message);
+      toast.success(data.message || "Category deleted successfully");
 
       setCategories([]);
       setPage(1);
       fetchCategories(1, search);
     } catch (error) {
       console.error("Delete error:", error);
+      toast.error("Error deleting category");
     }
   };
 

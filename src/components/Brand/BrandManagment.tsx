@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { FiSearch } from "react-icons/fi";
 import AddBrandForm from "./AddBrandForm";
 import Drawer from "../../global/Drawer";
@@ -47,8 +48,17 @@ const BrandManagment: React.FC = () => {
     if (!confirm("Are you sure?")) return;
     try {
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/brand/${id}`, { method: "DELETE" });
-      if (res.ok) fetchBrands();
-    } catch (err) { console.error(err); }
+      if (res.ok) {
+        toast.success("Brand deleted successfully");
+        fetchBrands();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || "Failed to delete brand");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error deleting brand");
+    }
   };
 
   const filteredBrands = brands.filter(

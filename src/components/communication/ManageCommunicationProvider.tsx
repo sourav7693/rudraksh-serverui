@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast';
 import AddCommunicationProviderForm from './AddCommunicationProviderForm'
 import Drawer from '../../global/Drawer';
 import type { CommunicationProviderItem } from '../../types/types';
@@ -24,14 +25,19 @@ const ManageCommunicationProvider = () => {
   }, []);
 
   const deleteProvider = async (id: string) => {
-  if (!confirm("Are you sure you want to delete this provider?")) return;
+    if (!confirm("Are you sure you want to delete this provider?")) return;
 
-  await axios.delete(
-    `${import.meta.env.VITE_BASE_URL}/api/communication-provider/${id}`
-  );
-
-  fetchProviders(); // refresh list
-};
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/api/communication-provider/${id}`
+      );
+      toast.success("Provider deleted successfully");
+      fetchProviders(); // refresh list
+    } catch (error: any) {
+      console.error("Delete provider error:", error);
+      toast.error(error.response?.data?.message || "Failed to delete provider");
+    }
+  };
 
   const whatsappProviders = providers.filter(
     (p) => p.provider === "WHATSAPP"

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import toast from "react-hot-toast";
 import TemplateCard from "./TemplateCard";
 import CustomerSelectionModal from "./CustomerSelectionModal";
 
@@ -50,16 +51,16 @@ const BulkMarketingManagement = () => {
         throw new Error("Failed to send template. Please try again.");
       }
 
-      // For now, just show an alert
-      alert(
-        `Template will be sent to: ${formData.customerType}\n${formData.sendImmediately ? "Immediately" : `Scheduled for: ${formData.scheduledDateTime}`}`,
+      // Success notification with details
+      toast.success(
+        `Template ${formData.sendImmediately ? "sent" : "scheduled"} for ${formData.customerType}`,
       );
 
       // Reset states after successful submission
       return Promise.resolve();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending template:", error);
-      alert("Failed to send template. Please try again.");
+      toast.error(error.response?.data?.message || "Failed to send template. Please try again.");
       return Promise.reject(error);
     }
   };

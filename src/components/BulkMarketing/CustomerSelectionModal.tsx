@@ -5,6 +5,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { BsPhone } from "react-icons/bs";
 import { HiExternalLink } from "react-icons/hi";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const parseMobileNumbers = (input: string): string[] => {
   // Split by comma, newline, or space
@@ -338,14 +339,14 @@ export default function CustomerSelectionModal({
     );
 
     if (missingParams.length > 0) {
-      alert(
-        `Please fill all template parameters:\n${missingParams.map((p) => `Parameter ${p}`).join("\n")}`,
+      toast.error(
+        `Please fill all template parameters:\n${missingParams.map((p) => `Parameter ${p}`).join(", ")}`,
       );
       return;
     }
 
     if (!immediateSend && (!scheduleDate || !scheduleTime)) {
-      alert("Please select schedule date and time");
+      toast.error("Please select schedule date and time");
       return;
     }
 
@@ -359,7 +360,7 @@ export default function CustomerSelectionModal({
 
       // Optional: Validate future date
       if (dateTime <= new Date()) {
-        alert("Please select a future date and time");
+        toast.error("Please select a future date and time");
         setIsSubmitting(false);
         return;
       }
@@ -680,7 +681,7 @@ export default function CustomerSelectionModal({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center sticky bottom-0 bg-white z-10">
+            <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center sticky bottom-0 z-10">
               <div className="text-sm text-gray-500">
                 <span className="font-medium">{customerList.length || 0}</span>{" "}
                 customers will receive this message

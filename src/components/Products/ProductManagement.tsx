@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import AddProductForm from "./AddProductForm";
 import Drawer from "../../global/Drawer";
 import type { PickupItem } from "../picup/PickupManagment";
@@ -132,12 +133,19 @@ const ProductManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this product?")) return;
     try {
-      await fetch(`${import.meta.env.VITE_BASE_URL}/api/product/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/product/${id}`, {
         method: "DELETE",
       });
-      fetchProducts();
+      if (res.ok) {
+        toast.success("Product deleted successfully");
+        fetchProducts();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || "Failed to delete product");
+      }
     } catch (err) {
       console.error(err);
+      toast.error("Error deleting product");
     }
   };
 
@@ -281,7 +289,7 @@ const ProductManagement: React.FC = () => {
             {getPageNumbers().map((num) => (
               <button
                 key={num}
-                className={`px-3 py-1 border rounded min-w-[32px] ${
+                className={`px-3 py-1 border rounded min-w-8 ${
                   num === page
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white hover:bg-gray-50 text-gray-700"

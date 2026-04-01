@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { CategoryItem, CategoryRow } from "./CategoryManagment";
+import toast from "react-hot-toast";
 export interface CategoryNode {
   _id: string;
   name: string;
@@ -270,7 +271,7 @@ export default function AddCategoryForm({
 
   const submitLevel = async (idx: number) => {
     const block = levels[idx];
-    if (!block.name || !block.name.trim()) return alert("Enter name");
+    if (!block.name || !block.name.trim()) return toast.error("Enter name");
 
     setSavingIdx(idx);
     setSavingMode("create");
@@ -282,7 +283,7 @@ export default function AddCategoryForm({
         block.parentChain.length < neededDepth ||
         !block.parentChain[neededDepth - 1]
       ) {
-        return alert("Please select parent chain for this level");
+        return toast.error("Please select parent chain for this level");
       }
     }
 
@@ -309,7 +310,7 @@ export default function AddCategoryForm({
 
         const rootNode = findNodeById(tree, rootId);
         if (!rootNode) {
-          return alert("Root category not found");
+          return toast.error("Root category not found");
         }
 
         const parentId = block.parentChain[block.parentChain.length - 1];
@@ -328,11 +329,12 @@ export default function AddCategoryForm({
       }
 
       if (!res.ok) {
-        return alert(data?.message || "Error saving");
+        return toast.error(data?.message || "Error saving");
       }
 
 
 
+      toast.success(block.level === 1 ? "Category added!" : "Subcategory added!");
       onSuccess();
 
       setLevels((prev) => {
@@ -347,7 +349,8 @@ export default function AddCategoryForm({
       });
     } catch (err) {
       console.error("submitLevel err:", err);
-      alert("Error saving");
+      console.error("submitLevel err:", err);
+      toast.error("Error saving category");
     } finally {
       setSavingIdx(null);
       setSavingMode(null);
@@ -356,8 +359,8 @@ export default function AddCategoryForm({
 
   const updateLevel = async (idx: number) => {
     const block = levels[idx];
-    if (!block.name?.trim()) return alert("Enter name");
-    if (!editingIds[idx]) return alert("No item selected for update");
+    if (!block.name?.trim()) return toast.error("Enter name");
+    if (!editingIds[idx]) return toast.error("No item selected for update");
 
     setSavingIdx(idx);
     setSavingMode("update");
@@ -366,7 +369,7 @@ export default function AddCategoryForm({
       (editData?.chain?.[0] as CategoryItem)?.categoryId ||
       block.parentChain[0];
 
-    if (!rootCategoryId) return alert("Root categoryId missing");
+    if (!rootCategoryId) return toast.error("Root categoryId missing");
 
     const fd = new FormData();
     if (block.image) fd.append("image", block.image);
@@ -377,7 +380,7 @@ export default function AddCategoryForm({
     } else {
       // Nested update -> childId must be Mongo _id, and use newChildName
       const targetChildMongoId = editingIds[idx];
-      if (!targetChildMongoId) return alert("No child selected for update");
+      if (!targetChildMongoId) return toast.error("No child selected for update");
 
       fd.append("childId", targetChildMongoId);
       fd.append("newChildName", block.name.trim());
@@ -394,10 +397,11 @@ export default function AddCategoryForm({
       const data = await res.json();
 
       if (!res.ok) {
-        return alert(data?.message || "Update failed");
+        return toast.error(data?.message || "Update failed");
       }
 
 
+      toast.success("Category updated!");
       onSuccess(); // Parent refresh
 
       // Clear editing
@@ -418,7 +422,8 @@ export default function AddCategoryForm({
       });
     } catch (err) {
       console.error("updateLevel err:", err);
-      alert("Update failed");
+      console.error("updateLevel err:", err);
+      toast.error("Update failed");
     } finally {
       setSavingIdx(null);
       setSavingMode(null);
@@ -484,7 +489,7 @@ export default function AddCategoryForm({
                             : `Parent Level ${ancestorDepth}`}
                         </label>
                         <select
-                          className="border h-[3.5rem] border-gray-200 outline-none p-2 w-full"
+                          className="border h-14 border-gray-200 outline-none p-2 w-full"
                           value={
                             (lvl.parentChain && lvl.parentChain[ancestorIdx]) ||
                             ""
@@ -517,7 +522,7 @@ export default function AddCategoryForm({
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        className="border p-2 border-gray-200 w-full rounded-md h-[3.5rem] outline-none"
+                        className="border p-2 border-gray-200 w-full rounded-md h-14 outline-none"
                         placeholder="Name"
                         value={lvl.name}
                         onChange={(e) =>
@@ -532,7 +537,7 @@ export default function AddCategoryForm({
                       <input
                         type="file"
                         accept="image/*"
-                        className="border p-2  border-gray-200 w-full rounded-md  h-[3.5rem] outline-none  "
+                        className="border p-2  border-gray-200 w-full rounded-md  h-14 outline-none  "
                         onChange={(e) =>
                           handleFileChange(index, e.target.files?.[0] || null)
                         }
@@ -541,7 +546,7 @@ export default function AddCategoryForm({
                     </div>
                   </div>
                   <div className="w-auto">
-                    <div className="w-[8.5rem] h-[8.5rem] bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+                    <div className="w-34 h-34 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
                       {previewUrls[index] ? (
                         <img
                           src={previewUrls[index]}
