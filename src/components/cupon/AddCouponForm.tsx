@@ -57,8 +57,44 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
   }, [editData, open]);
 
   const handleSubmit = async () => {
-    if ( !code) {
+    if(!name) {
+      return toast.error("Coupon name is required!");
+    }
+    if (!code) {
       return toast.error("Coupon code is required!");
+    }
+    if (!discountType) {
+      return toast.error("Discount type is required!");
+    }
+    if (!discountValue || discountValue <= 0) {
+      return toast.error("Discount value must be greater than 0!");
+    }
+    if (!minOrderAmount || minOrderAmount < 0) {
+      return toast.error("Minimum order amount must be 0 or greater!");
+    }
+    if (!maxDiscountAmount || maxDiscountAmount < 0) {
+      return toast.error("Maximum discount amount must be 0 or greater!");
+    }
+   if (!usageLimit || usageLimit <= 0) {
+      return toast.error("Usage limit must be greater than 0!");
+    }
+    if (!startDate || !expirationDate) {
+      return toast.error("Start date and expiration date are required!");
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(expirationDate);
+
+    if (start.getTime() === end.getTime()) {
+      return toast.error("Start date and end date cannot be the same!");
+    }
+
+    if (start > end) {
+      return toast.error("Start date cannot be after end date!");
+    }
+
+    if (end < start) {
+      return toast.error("End date cannot be before start date!");
     }
 
     const body = {
@@ -106,7 +142,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  };;
 
   if (!open) return null;
 
@@ -206,6 +242,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
               <input
                 type="date"
                 value={startDate}
+                max={expirationDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
               />
@@ -217,6 +254,7 @@ const AddCouponForm: React.FC<AddCouponFormProps> = ({
               <input
                 type="date"
                 value={expirationDate}
+                min={startDate}
                 onChange={(e) => setExpirationDate(e.target.value)}
                 className="w-full border border-gray-200 outline-none placeholder:text-gray-500 rounded px-3 py-2"
               />
