@@ -10,6 +10,7 @@ import ViewProduct from "./ViewProduct";
 import Adder from "../../global/Adder";
 import Toggle from "../../global/Toggle";
 import { useQueryParams } from "../../hooks/useQueryParams";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export interface CategoryNode {
   _id: string;
@@ -102,14 +103,24 @@ const ProductManagement: React.FC = () => {
 
   const { getParam, updateFilters } = useQueryParams();
 
-  const search = getParam("search") || "";
+  const searchUrlParam = getParam("search") || "";
   const status = getParam("status") || "";
+
+  const [localSearch, setLocalSearch] = useState(searchUrlParam);
+  
+  const debouncedSearch = useDebounce(localSearch, 400);
+
+  useEffect(() => {
+    if (debouncedSearch !== searchUrlParam) {
+      updateFilters("search", debouncedSearch);
+    }
+  }, [debouncedSearch]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/product?page=${page}&limit=${limit}&q=${encodeURIComponent(search)}&status=${status}`,
+        `${import.meta.env.VITE_BASE_URL}/api/product?page=${page}&limit=${limit}&q=${encodeURIComponent(searchUrlParam)}&status=${status}`,
       );
       const data = await res.json();
       setProducts(data.data || []);
@@ -124,11 +135,11 @@ const ProductManagement: React.FC = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [search, status]);
+  }, [searchUrlParam, status]);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, search, status]);
+  }, [page, searchUrlParam, status]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this product?")) return;
@@ -172,8 +183,8 @@ const ProductManagement: React.FC = () => {
     <>
       <Adder
         title="Add Product"
-        search={search}
-        setSearch={(value) => updateFilters("search", value)}
+        search={localSearch}
+        setSearch={setLocalSearch}
         onAdd={() => {
           setEditData(null);
           setOpenForm(true);
