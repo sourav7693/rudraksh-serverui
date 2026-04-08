@@ -74,7 +74,7 @@ const AddProductForm: React.FC<AddProductProps> = ({
   const [dimensions, setDimensions] = useState([
     { no_of_box: "1", length: "", width: "", height: "" },
   ]);
-  const [typeOfPackage, setTypeOfPackage] = useState("PLANT_BOX");
+  const [typeOfPackage, setTypeOfPackage] = useState("GIFT_BOX");
   const [returnPolicy, setReturnPolicy] = useState("NO_RETURN_NO_REPLACEMENT");
   const [showDimensions, setShowDimensions] = useState(false);
 
