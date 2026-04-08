@@ -1,6 +1,7 @@
 import { FiCalendar, FiChevronDown, FiSearch, FiX } from "react-icons/fi";
 import { useQueryParams } from "../../hooks/useQueryParams";
 import { useEffect, useState } from "react";
+import api from "../../lib/axios";
 
 export default function OrderFilter() {
   const { getParam, setMultipleParams } = useQueryParams();
@@ -9,6 +10,25 @@ export default function OrderFilter() {
   const status = getParam("status") || "";
   const startDate = getParam("startDate") || "";
   const endDate = getParam("endDate") || "";
+
+  // NEW: State to hold the counts
+  const [pendingCounts, setPendingCounts] = useState({ returns: 0, replacements: 0, total: 0 });
+
+  // NEW: Fetch counts on mount
+  useEffect(() => {
+    const fetchPendingCounts = async () => {
+      try {
+        const res = await api.get(`order/pending-returns`);
+        if (res.data.success) {
+          setPendingCounts(res.data.counts);
+        }
+      } catch (err) {
+        console.error("Failed to fetch pending return counts", err);
+      }
+    };
+
+    fetchPendingCounts();
+  }, []);
 
   const handleDateRangeApply = (newStartDate: string, newEndDate: string) => {
     setMultipleParams({
@@ -30,39 +50,65 @@ export default function OrderFilter() {
     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
       {/* Left Section */}
       <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-        <select
-          className="bg-defined-white outline-none rounded px-4 py-2"
-          value={status}
-          onChange={(e) =>
-            setMultipleParams({
-              page: "1",
-              status: e.target.value,
-            })
-          }
-        >
-          <option value="">Filter</option>
-          {[
-            "Processing",
-            "Confirmed",
-            "Cancelled",
-            "Shipped",
-            "InTransit",
-            "OutForDelivery",
-            "Delivered",
-            "RTO",
-          ].map((status) => (
-            <option key={status} value={status}>
-              {status}
+        
+        {/* DROPDOWN WRAPPER WITH NOTIFICATION BADGE */}
+        <div className="relative w-full sm:w-auto">
+          {pendingCounts.total > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-3 w-3 z-10">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
+            </span>
+          )}
+
+          <select
+            className="bg-defined-white outline-none rounded px-4 py-2 w-full border border-transparent focus:border-gray-300"
+            value={status}
+            onChange={(e) =>
+              setMultipleParams({
+                page: "1",
+                status: e.target.value,
+              })
+            }
+          >
+            <option value="">Filter Status</option>
+            
+            {/* Standard Statuses */}
+            {[
+              "Processing",
+              "Confirmed",
+              "Cancelled",
+              "Shipped",
+              "InTransit",
+              "OutForDelivery",
+              "Delivered",
+              "RTO",
+            ].map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+
+            {/* Dynamic Statuses with Counts */}
+            <option value="ReturnRequested" className="font-semibold text-red-600">
+              ReturnRequested {pendingCounts.returns > 0 ? `(${pendingCounts.returns}) 🔴` : ""}
             </option>
-          ))}
-        </select>
+            
+            <option value="ReplacementRequested" className="font-semibold text-orange-600">
+              ReplacementRequested {pendingCounts.replacements > 0 ? `(${pendingCounts.replacements}) 🔴` : ""}
+            </option>
+
+            {/* Completed Return Statuses */}
+            <option value="Returned">Returned</option>
+            <option value="Replaced">Replaced</option>
+            <option value="ReturnRejected">ReturnRejected</option>
+            <option value="ReplacementRejected">ReplacementRejected</option>
+          </select>
+        </div>
 
         <div className="relative w-full sm:w-auto">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-defined-black" />
           <input
             type="text"
             placeholder="Search..."
-            className="bg-defined-white/60 rounded pl-10 pr-4 py-2 outline-none  w-[20rem]"
+            className="bg-defined-white/60 rounded pl-10 pr-4 py-2 outline-none w-full sm:w-[20rem]"
             value={search}
             onChange={(e) =>
               setMultipleParams({
@@ -129,7 +175,7 @@ const DateRangePicker = ({
         }`}
       >
         <FiCalendar className="w-4 h-4" />
-        <span className="text-sm">
+        <span className="text-sm text-nowrap">
           {startDate && endDate
             ? `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`
             : startDate
