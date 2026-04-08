@@ -11,6 +11,7 @@ import WordLikeDescriptionBox from "../../global/WordLikeDescriptionBox";
 import SpecificationInProduct from "./SpecificationInProduct";
 import toast from "react-hot-toast";
 const api = import.meta.env.VITE_BASE_URL;
+
 interface AddProductProps {
   open: boolean;
   onClose: () => void;
@@ -111,7 +112,6 @@ const AddProductForm: React.FC<AddProductProps> = ({
       );
       const data = await res.json();
       setBackendAttributes(data.attributes || []);
-      // console.log("aatributes",data.attributes);
     } catch (err) {
       console.error(err);
     }
@@ -180,6 +180,7 @@ const AddProductForm: React.FC<AddProductProps> = ({
       return variantValue;
     return parentValue ?? undefined;
   };
+  
   useEffect(() => {
     if (!editData || !open) return;
 
@@ -226,21 +227,18 @@ const AddProductForm: React.FC<AddProductProps> = ({
 
     if (specsInitializedRef.current) return;
 
-    // SIMPLE PRODUCT
     if (!editData.isVariant) {
       setSpecifications(editData.specifications || []);
       specsInitializedRef.current = true;
       return;
     }
 
-    // VARIANT WITH OWN SPECS
     if (editData.specifications && editData.specifications.length > 0) {
       setSpecifications(editData.specifications);
       specsInitializedRef.current = true;
       return;
     }
 
-    // VARIANT INHERITING FROM PARENT
     if (editData.parentProduct?.specifications) {
       setSpecifications(
         editData.parentProduct.specifications.map((s) => ({
@@ -252,7 +250,7 @@ const AddProductForm: React.FC<AddProductProps> = ({
     }
   }, [
     editData,
-    editData?.parentProduct, // 🔥 IMPORTANT
+    editData?.parentProduct,
     open,
   ]);
 
@@ -265,43 +263,43 @@ const AddProductForm: React.FC<AddProductProps> = ({
 const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const f = e.target.files?.[0];
 
-  if (!f) return;
+    if (!f) return;
 
-  if (f.size > 1024 * 1024) {
-    toast.error("Cover image must be less than 1MB");
+    if (f.size > 1024 * 1024) {
+      toast.error("Cover image must be less than 1MB");
+      e.target.value = "";
+      return;
+    }
+
+    setCoverImage(f);
+    setPreview(URL.createObjectURL(f));
+  };
+
+  const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+
+    const validFiles: File[] = [];
+
+    files.forEach((file) => {
+      if (file.size > 1024 * 1024) {
+        toast.error(`${file.name} is larger than 1MB`);
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    const pv = validFiles.map((file) => URL.createObjectURL(file));
+
+    setImages((prev) => [...prev, ...validFiles]);
+    setPreviews((prev) => [...prev, ...pv]);
+
     e.target.value = "";
-    return;
-  }
-
-  setCoverImage(f);
-  setPreview(URL.createObjectURL(f));
-};
-
- const handleImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-   const files = Array.from(e.target.files || []);
-
-   const validFiles: File[] = [];
-
-   files.forEach((file) => {
-     if (file.size > 1024 * 1024) {
-       toast.error(`${file.name} is larger than 1MB`);
-     } else {
-       validFiles.push(file);
-     }
-   });
-
-   const pv = validFiles.map((file) => URL.createObjectURL(file));
-
-   setImages((prev) => [...prev, ...validFiles]);
-   setPreviews((prev) => [...prev, ...pv]);
-
-   e.target.value = "";
- };
+  };
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreviews((prev) => {
-      URL.revokeObjectURL(prev[index]); // cleanup
+      URL.revokeObjectURL(prev[index]);
       return prev.filter((_, i) => i !== index);
     });
   };
@@ -321,39 +319,35 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const removeVariable = (i: number) =>
     setVariables((prev) => prev.filter((_, idx) => idx !== i));
 
-const toggleVariableValue = (index: number, value: string) => {
-  const variableName = variables[index].name;
-  const usedValues = getUsedValues(variableName);
+  const toggleVariableValue = (index: number, value: string) => {
+    const variableName = variables[index].name;
+    const usedValues = getUsedValues(variableName);
 
-  if (usedValues.includes(value.toLowerCase())) {
-    return; // 🚫 block selection
-  }
+    if (usedValues.includes(value.toLowerCase())) {
+      return; 
+    }
 
-  setVariables((prev) =>
-    prev.map((item, i) => (i === index ? { ...item, values: [value] } : item)),
-  );
-};
+    setVariables((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, values: [value] } : item)),
+    );
+  };
 
   const handleAttributeToggle = (id: string) => {
     setAttributes(
       (prev) =>
         prev.includes(id)
-          ? prev.filter((item) => item !== id) // remove
-          : [...prev, id], // add
+          ? prev.filter((item) => item !== id) 
+          : [...prev, id],
     );
   };
 
   const handleCategoryChange = (level: number, value: string) => {
     const newPath = [...categoryLevel];
     newPath[level] = value;
-
-    // remove any deeper levels beyond this one
     newPath.length = level + 1;
-
     setCategoryLevel(newPath);
   };
 
-  // returns children array based on selected path
   const getChildrenOf = (
     categories: CategoryNode[],
     path: string[],
@@ -374,11 +368,21 @@ const toggleVariableValue = (index: number, value: string) => {
       toast.error("Please select a parent product for this variant");
       return;
     }
-    console.log("selected p", selectedParent);
+    
     if (variables.some((v) => !v.name || v.values.length === 0)){
       toast.error("Please fill all variable details");
       return;
     }
+
+    // ✅ NEW FRONTEND CHECK: Prevent duplicate variables from submitting
+    const uniqueNames = new Set(
+      variables.map(v => v.name.trim().toLowerCase() === "colour" ? "color" : v.name.trim().toLowerCase())
+    );
+    if (uniqueNames.size !== variables.length) {
+      toast.error("Duplicate variables found. You can only use a variable (e.g. Color) once.");
+      return;
+    }
+
     if (type === "Variable") {
       if (
         !name ||
@@ -440,17 +444,13 @@ const toggleVariableValue = (index: number, value: string) => {
 
    fd.append("variables", JSON.stringify(cleanedVariables));
 
-    // console.log("Submitting variables:", variables);
-
     let url = "";
     let method: "POST" | "PUT" = "POST";
 
-    // SIMPLE PRODUCT
     if (type === "Simple") {
       url = `${import.meta.env.VITE_BASE_URL}/api/product`;
     }
 
-    // CREATE VARIANT
     if (type === "Variable" && !editData) {
       if (!selectedParent)
         return toast.error("Please select a parent product for this variant");
@@ -464,7 +464,6 @@ const toggleVariableValue = (index: number, value: string) => {
       fd.append("parentProduct", selectedParent._id);
     }
 
-    // EDITING EXISTING SIMPLE PRODUCT
     if (editData && !editData.isVariant) {
       url = `${import.meta.env.VITE_BASE_URL}/api/product/${
         editData?.productId
@@ -472,7 +471,6 @@ const toggleVariableValue = (index: number, value: string) => {
       method = "PUT";
     }
 
-    // EDITING EXISTING VARIANT PRODUCT (**IMPORTANT FIX**)
     if (editData && editData.isVariant) {
       url = `${import.meta.env.VITE_BASE_URL}/api/product/variant/${
         editData.productId
@@ -496,7 +494,6 @@ const toggleVariableValue = (index: number, value: string) => {
       }
 
       if (!res.ok) {
-        // 🔥 Custom readable errors
         const message =
           data?.message ||
           data?.error ||
@@ -650,10 +647,9 @@ const toggleVariableValue = (index: number, value: string) => {
                 Select Category<span className="text-xl/0 text-red-500">*</span>
               </label>
 
-              {/* First Level Dropdown */}
               <select
                 className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem] mb-3"
-                value={categoryLevel[0] || ""}
+                value={categoryLevel || ""}
                 onChange={(e) => handleCategoryChange(0, e.target.value)}
               >
                 <option value="">Select Category</option>
@@ -664,7 +660,6 @@ const toggleVariableValue = (index: number, value: string) => {
                 ))}
               </select>
 
-              {/* AUTO-GENERATED LEVELS */}
               {categoryLevel.map((selectedId, level) => {
                 const children = getChildrenOf(
                   backendCategories,
@@ -691,20 +686,6 @@ const toggleVariableValue = (index: number, value: string) => {
                 );
               })}
             </div>
-            {/* {type === "Variable" && selectedParent && (
-              <div className="mt-4 border p-3 rounded bg-gray-50">
-                <label className="font-semibold block mb-1">
-                  Inherited Categories
-                </label>
-                {selectedParent && (
-                  <div className="text-sm text-gray-700">
-                    {selectedParent.categoryLevels.map((cat, i) => (
-                      <p key={i}>{cat.name}</p>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )} */}
 
             <div>
               <label className="font-semibold block mb-1">
@@ -850,7 +831,7 @@ const toggleVariableValue = (index: number, value: string) => {
               >
                 <option value="">Select Brand</option>
                 {backendBrands.map((b) => (
-                  <option value={b._id}>{b.name}</option>
+                  <option key={b._id} value={b._id}>{b.name}</option>
                 ))}
               </select>
             </div>
@@ -879,18 +860,30 @@ const toggleVariableValue = (index: number, value: string) => {
                 >
                   {/* Select Variable Name */}
                   <select
-                    className="border border-gray-200 outline-none flex-1 px-3 py-2 rounded  w-1/2 h-[3.5rem]"
+                    className="border border-gray-200 outline-none flex-1 px-3 py-2 rounded w-1/2 h-[3.5rem]"
                     value={variable.name}
                     onChange={(e) =>
                       handleVariableNameChange(index, e.target.value)
                     }
                   >
                     <option value="">Select Variable</option>
-                    {backendVariables.map((v) => (
-                      <option key={v._id} value={v.name}>
-                        {v.name}
-                      </option>
-                    ))}
+                    {backendVariables.map((v) => {
+                      // ✅ NEW UI CHECK: Disable option if used in another variable block
+                      const isSelectedElseWhere = variables.some(
+                        (varItem, idx) => idx !== index && varItem.name === v.name
+                      );
+                      
+                      return (
+                        <option 
+                          key={v._id} 
+                          value={v.name} 
+                          disabled={isSelectedElseWhere}
+                          className={isSelectedElseWhere ? "text-gray-400" : "text-black"}
+                        >
+                          {v.name} {isSelectedElseWhere ? "(Already added)" : ""}
+                        </option>
+                      );
+                    })}
                   </select>
 
                   {/* Show Values If Variable Selected */}
@@ -899,7 +892,7 @@ const toggleVariableValue = (index: number, value: string) => {
                       <div className="flex gap-4 w-full">
                         <select
                           className="border border-gray-300 rounded px-2 py-1 w-full h-[3.5rem]"
-                          value={variable.values[0] || ""} // Default to empty string if nothing selected
+                          value={variable.values || ""} 
                           onChange={(e) =>
                             toggleVariableValue(index, e.target.value)
                           }
@@ -940,7 +933,6 @@ const toggleVariableValue = (index: number, value: string) => {
             })}
           </div>
 
-          {/* SHOW ONLY IF PRODUCT TYPE = VARIABLE */}
           {type === "Variable" && (
             <div className="mt-4">
               <label className="font-semibold block mb-1">
@@ -948,7 +940,6 @@ const toggleVariableValue = (index: number, value: string) => {
                 <span className="text-xl/0 text-red-500">*</span>
               </label>
 
-              {/* SEARCH INPUT */}
               <input
                 type="text"
                 className="w-full border border-gray-300 px-3 py-2 rounded-md h-[3.5rem]"
@@ -957,7 +948,6 @@ const toggleVariableValue = (index: number, value: string) => {
                 onChange={(e) => searchParentProducts(e.target.value)}
               />
 
-              {/* SEARCH RESULTS DROPDOWN */}
               {parentResults.length > 0 && (
                 <div className="border mt-2 bg-white rounded-md shadow-md max-h-40 overflow-y-auto">
                   {parentResults.map((p) => (
@@ -1003,19 +993,7 @@ const toggleVariableValue = (index: number, value: string) => {
                           p.returnPolicy || "NO_RETURN_NO_REPLACEMENT",
                         );
 
-                        // Show dimensions if parent has them
                         setShowDimensions(!!p.dimensions?.length);
-
-                        if (p.specifications && p.specifications.length > 0) {
-                          setSpecifications(
-                            p.specifications.map((s) => ({
-                              name: s.name,
-                              details: s.details,
-                            })),
-                          );
-                        } else {
-                          setSpecifications([]);
-                        }
                       }}
                     >
                       {p.name}
@@ -1024,7 +1002,6 @@ const toggleVariableValue = (index: number, value: string) => {
                 </div>
               )}
 
-              {/* SELECTED PARENT SUMMARY */}
               {selectedParent && (
                 <div className="mt-2 p-3 bg-green-50 border border-green-300 rounded-md">
                   <p className="text-green-700 text-sm">
@@ -1100,9 +1077,8 @@ const toggleVariableValue = (index: number, value: string) => {
               </div>
 
               <div className="space-y-2 p-3 bg-white border border-gray-200 rounded-md">
-                {/* Single dimension row */}
                 {dimensions.map((dim, index) => (
-                  <div className="flex gap-1 items-end">
+                  <div key={index} className="flex gap-1 items-end">
                     <input
                       type="text"
                       placeholder="No. of boxes"
@@ -1152,7 +1128,6 @@ const toggleVariableValue = (index: number, value: string) => {
                       className="text-sm w-fit rounded px-4 bg-blue-600 hover:bg-blue-800 text-white h-[3rem]  flex items-center gap-1 "
                       onClick={(e) => {
                         e.stopPropagation();
-                        // AUTOMATICALLY INCREASE no_of_box (1, 2, 3...)
                         const newNoOfBox = dimensions.length + 1;
                         setDimensions((prev) => [
                           ...prev,
@@ -1184,8 +1159,6 @@ const toggleVariableValue = (index: number, value: string) => {
                     )}
                   </div>
                 ))}
-
-                {/* Add More Button (optional - for multiple boxes) */}
               </div>
             </div>
           </div>
