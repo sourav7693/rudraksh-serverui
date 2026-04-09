@@ -9,7 +9,7 @@ const Order = () => {
       <title>Ganapati Rudrakshaam Admin | Order</title>
     </Helmet>
      <div className="self-padding">
-        <h2 className="text-2xl font-semibold">Manage Order</h2>
+        {/* <h2 className="text-2xl font-semibold">Manage Order</h2> */}
            <OrderManagment/>
 
       </div>

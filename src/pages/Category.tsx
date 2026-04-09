@@ -10,7 +10,7 @@ const Category = () => {
     </Helmet>
     
      <div className="self-padding">
-        <h2 className="text-2xl font-semibold">Manage Category</h2>
+        {/* <h2 className="text-2xl font-semibold">Manage Category</h2> */}
           <CategoryMangment/>
 
       </div>

@@ -9,7 +9,7 @@ const Coupon = () => {
     </Helmet>
     
      <div className="self-padding">
-        <h2 className="text-2xl font-semibold">Manage Coupon</h2>
+        {/* <h2 className="text-2xl font-semibold">Manage Coupon</h2> */}
        <CouponManagment/>
 
       </div>

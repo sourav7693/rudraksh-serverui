@@ -10,7 +10,6 @@ import type { PickupItem } from "../picup/PickupManagment";
 import WordLikeDescriptionBox from "../../global/WordLikeDescriptionBox";
 import SpecificationInProduct from "./SpecificationInProduct";
 import toast from "react-hot-toast";
-const api = import.meta.env.VITE_BASE_URL;
 
 interface AddProductProps {
   open: boolean;
@@ -215,7 +214,7 @@ const AddProductForm: React.FC<AddProductProps> = ({
         : [{ no_of_box: "1", length: "", width: "", height: "" }],
     );
 
-    setTypeOfPackage(editData.typeOfPackage || "PLANT_BOX");
+    setTypeOfPackage(editData.typeOfPackage || "GIFT_BOX");
     setReturnPolicy(editData.returnPolicy || "NO_RETURN_NO_REPLACEMENT");
 
     setShowDimensions(!!editData.dimensions?.length);
@@ -464,18 +463,31 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       fd.append("parentProduct", selectedParent._id);
     }
 
-    if (editData && !editData.isVariant) {
-      url = `${import.meta.env.VITE_BASE_URL}/api/product/${
-        editData?.productId
-      }`;
-      method = "PUT";
-    }
+    // let url = "";
+    // let method: "POST" | "PUT" = "POST";
 
-    if (editData && editData.isVariant) {
-      url = `${import.meta.env.VITE_BASE_URL}/api/product/variant/${
-        editData.productId
-      }`;
+    if (editData) {
       method = "PUT";
+      // If converting to Simple (or staying Simple), use main update route to trigger the downgrade logic
+      if (type === "Simple") {
+        url = `${import.meta.env.VITE_BASE_URL}/api/product/${editData.productId}`;
+      } else {
+        // If it remains a Variable product, use the variant update route
+        url = `${import.meta.env.VITE_BASE_URL}/api/product/variant/${editData.productId}`;
+        if (selectedParent) {
+          fd.append("parentProduct", selectedParent._id);
+        }
+      }
+    } else {
+      method = "POST";
+      if (type === "Simple") {
+        url = `${import.meta.env.VITE_BASE_URL}/api/product`;
+      } else {
+        if (!selectedParent)
+          return toast.error("Please select a parent product for this variant");
+        fd.append("parentProduct", selectedParent._id);
+        url = `${import.meta.env.VITE_BASE_URL}/api/product/${selectedParent._id}/variant`;
+      }
     }
 
     try {
@@ -759,12 +771,23 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               </label>
               <select
                 value={type}
-                className="border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem]"
+                className={`border border-gray-200 outline-none px-3 py-2 rounded-md w-full h-[3.5rem] ${
+                  !!editData && !editData.isVariant ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+                }`}
                 onChange={(e) => setType(e.target.value as any)}
+                disabled={!!editData && !editData.isVariant}
               >
                 <option value="Simple">Simple</option>
-                <option value="Variable">Variable</option>
+                <option value="Variable" disabled={!!editData && !editData.isVariant}>Variable</option>
               </select>
+              
+              {/* Contextual UI Messages based on the new logic */}
+              {!!editData && !editData.isVariant && (
+                <span className="text-xs text-gray-400">Simple products cannot be changed to Variable.</span>
+              )}
+              {!!editData && editData.isVariant && type === "Simple" && (
+                <span className="text-xs text-orange-500 font-medium">⚠️ Saving will permanently convert this to a Simple product.</span>
+              )}
             </div>
             <div className=" flex flex-col gap-2">
               <label htmlFor="mrp">
@@ -942,11 +965,17 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
               <input
                 type="text"
-                className="w-full border border-gray-300 px-3 py-2 rounded-md h-[3.5rem]"
-                placeholder="Search parent product..."
+                className={`w-full border border-gray-300 px-3 py-2 rounded-md h-[3.5rem] ${
+                  editData ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+                }`}
+                placeholder={editData ? "Parent product locked" : "Search parent product..."}
                 value={searchParent}
                 onChange={(e) => searchParentProducts(e.target.value)}
+                disabled={!!editData} // Disabled in edit mode
               />
+              {!!editData && (
+                <span className="text-xs text-gray-400 mt-1 block">Parent product cannot be changed after creation.</span>
+              )}
 
               {parentResults.length > 0 && (
                 <div className="border mt-2 bg-white rounded-md shadow-md max-h-40 overflow-y-auto">

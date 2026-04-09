@@ -12,7 +12,7 @@ const Product = () => {
     
     
         <div className="self-padding">
-        <h2 className="text-2xl font-semibold">Manage Product</h2>          
+        {/* <h2 className="text-2xl font-semibold">Manage Product</h2>           */}
            <ProductManagement/>
 
       </div>
