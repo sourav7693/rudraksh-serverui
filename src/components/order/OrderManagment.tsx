@@ -68,7 +68,7 @@ export interface AdminOrder {
   createdAt: string;
 }
 
-export const STATUS_OPTIONS = ["Processing", "Confirmed", "Cancelled"] as const;
+export const STATUS_OPTIONS = ["Processing", "Shipped", "Cancelled"] as const;
 
 export const STATUS_COLORS: Record<string, string> = {
   Processing: "bg-yellow-500",
